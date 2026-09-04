@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="author" content="N Ō R Y E">
   <meta name="keywords" content="norye,fragrance,perfume,inspired,creed aventus,parklands,kenya,eau de parfum">
-  <meta name="description" content="N Ō R Y E Olfactory Design Line. Inspired by iconic fragrances for men and women. 30ml Eau de Parfum from Ksh 1,299. Diamond Plaza 1, Parklands, Kenya.">
+  <meta name="description" content="N Ō R Y E Olfactory Design Line. Inspired by iconic perfumes for men and women. 30ml Eau de Parfum from Ksh 1,299. Diamond Plaza 1, Parklands, Kenya.">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="css/vendor.css">
@@ -63,14 +63,23 @@
     </defs>
   </svg>
 
-  <div class="preloader text-white fs-6 text-uppercase overflow-hidden"></div>
+  <div class="preloader text-white fs-6 text-uppercase overflow-hidden">
+    <div class="norye-preloader-brand" aria-hidden="true">
+      <span class="norye-preloader-letter">N</span>
+      <span class="norye-preloader-letter norye-preloader-o">Ō</span>
+      <span class="norye-preloader-letter">R</span>
+      <span class="norye-preloader-letter">Y</span>
+      <span class="norye-preloader-letter">E</span>
+    </div>
+  </div>
 
   <div class="search-popup">
     <div class="search-popup-container">
-      <form role="search" method="get" class="form-group" action="">
-        <input type="search" id="search-form" class="form-control border-0 border-bottom" placeholder="Search fragrances..." value="" name="s" />
-        <button type="submit" class="search-submit border-0 position-absolute bg-white" style="top: 15px;right: 15px;">
-          <svg class="search" width="24" height="24"><use xlink:href="#search"></use></svg>
+      <button type="button" class="search-popup-close" aria-label="Close search">&times;</button>
+      <form role="search" method="get" class="norye-search-form" action="">
+        <input type="search" id="search-form" class="form-control" placeholder="Search perfumes..." value="" name="s" />
+        <button type="submit" class="search-submit" aria-label="Search">
+          <svg width="20" height="20"><use xlink:href="#search"></use></svg>
         </button>
       </form>
       <h5 class="cat-list-title">Browse Scents</h5>
@@ -78,30 +87,27 @@
     </div>
   </div>
 
-  <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart" aria-labelledby="My Cart">
-    <div class="offcanvas-header justify-content-center">
+  <div class="offcanvas offcanvas-end norye-cart-panel" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasCart" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title text-uppercase" id="cartOffcanvasLabel">Your Cart</h5>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
-      <div class="order-md-last">
-        <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-primary">Your cart</span>
-          <span class="badge bg-primary rounded-pill">1</span>
-        </h4>
-        <ul class="list-group mb-3">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0" id="cart-product-name">N Ō R Y E N°23</h6>
-              <small class="text-body-secondary" id="cart-product-desc">30ML Eau de Parfum. Inspired by Creed Aventus</small>
-            </div>
-            <span class="text-body-secondary" id="cart-product-price">Ksh 1,299</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Total (KES)</span>
-            <strong>Ksh 1,299</strong>
-          </li>
-        </ul>
-        <a href="https://www.instagram.com/norye_line/" target="_blank" rel="noopener" class="w-100 btn btn-primary btn-lg">Order via Instagram</a>
+    <div class="offcanvas-body d-flex flex-column">
+      <div id="cart-empty" class="text-center py-4">Your cart is empty</div>
+      <ul class="list-group mb-3" id="cart-items-list"></ul>
+      <div id="cart-footer" class="norye-cart-footer" style="display: none;">
+        <form id="cart-checkout-form" class="norye-checkout-form">
+          <input type="text" id="checkout-name" class="form-control" placeholder="Full name" required>
+          <input type="tel" id="checkout-phone" class="form-control" placeholder="Phone (WhatsApp)" required>
+          <input type="text" id="checkout-location" class="form-control" placeholder="Delivery location" required>
+          <textarea id="checkout-notes" class="form-control" rows="2" placeholder="Notes (optional)"></textarea>
+        </form>
+        <p id="checkout-error" class="norye-checkout-error" role="alert"></p>
+        <div class="d-flex justify-content-between mb-3 px-1">
+          <span>Total (KES)</span>
+          <strong id="cart-total">Ksh 0</strong>
+        </div>
+        <button type="button" id="cart-order-btn" class="btn btn-norye-gold w-100">Order on WhatsApp</button>
       </div>
     </div>
   </div>
@@ -126,8 +132,8 @@
             <div class="offcanvas-body">
               <ul class="navbar-nav justify-content-end flex-grow-1 gap-1 gap-md-4 pe-3">
                 <li class="nav-item"><a class="nav-link active" href="#billboard">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#men">Men</a></li>
-                <li class="nav-item"><a class="nav-link" href="#women">Women</a></li>
+                <li class="nav-item"><a class="nav-link" href="men.html">Men</a></li>
+                <li class="nav-item"><a class="nav-link" href="women.html">Women</a></li>
                 <li class="nav-item"><a class="nav-link" href="#best-sellers">Best Sellers</a></li>
                 <li class="nav-item"><a class="nav-link" href="#featured">Featured</a></li>
                 <li class="nav-item"><a class="nav-link" href="#footer">Contact</a></li>
@@ -135,20 +141,18 @@
             </div>
           </div>
         </div>
-        <div class="col-3 col-lg-auto">
-          <ul class="list-unstyled d-flex m-0 align-items-center">
-            <li class="d-none d-lg-block">
-              <a href="#" class="text-uppercase mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">Cart <span class="cart-count">(1)</span></a>
+        <div class="col-auto ms-auto">
+          <ul class="list-unstyled d-flex m-0 align-items-center gap-2 norye-nav-actions">
+            <li class="norye-nav-action">
+              <button type="button" class="norye-nav-btn search-button" aria-label="Search">
+                <svg width="20" height="20" viewBox="0 0 24 24"><use xlink:href="#search"></use></svg>
+              </button>
             </li>
-            <li class="d-lg-none">
-              <a href="#" class="mx-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#cart"></use></svg>
-              </a>
-            </li>
-            <li class="search-box mx-2">
-              <a href="#search" class="search-button">
-                <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#search"></use></svg>
-              </a>
+            <li class="norye-nav-action">
+              <button type="button" class="norye-nav-btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" aria-label="Cart">
+                <svg width="20" height="20" viewBox="0 0 24 24"><use xlink:href="#cart"></use></svg>
+                <span class="norye-nav-badge cart-count"></span>
+              </button>
             </li>
           </ul>
         </div>
@@ -160,18 +164,24 @@
     <div class="container">
       <div class="row align-items-center g-5">
         <div class="col-lg-6 text-center text-lg-start" data-aos="fade-up">
-          <h1 class="section-title norye-hero-title mb-3">N <span class="norye-o">Ō</span> R Y E</h1>
+          <h1 class="section-title norye-hero-title txt-fx domino mb-3" id="hero-title">N Ō R Y E</h1>
           <p class="text-uppercase letter-spacing-sm mb-3">Olfactory Design Line</p>
           <p class="norye-hero-tagline mb-4">You know those fine things that exist and somehow everyone notices?</p>
-          <p class="mb-4">Inspired by iconic fragrances. Slip it into your bag, keep it close, and refresh your scent whenever the moment calls for it.</p>
+          <p class="mb-4 norye-body-copy">Inspired by iconic perfumes. Slip it into your bag, keep it close, and refresh your scent whenever the moment calls for it.</p>
           <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-            <a href="#featured" class="btn btn-norye-gold">Shop Featured</a>
-            <a href="product.html?code=n23" class="btn btn-norye-outline">Discover N°23</a>
+            <a href="#featured" class="btn btn-norye-gold">Explore the Collection</a>
+            <a href="product.html?code=n23" class="btn btn-norye-outline">Shop Our Signature N°23</a>
           </div>
         </div>
         <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
           <div class="norye-hero-image">
-            <a href="product.html?code=n23"><img id="hero-product-image" src="images/N%2023.jpeg" alt="N Ō R Y E N°23" class="img-fluid"></a>
+            <div class="norye-hero-media">
+              <img id="hero-product-gif"
+                   src="https://media.giphy.com/media/QCLNBIUOoBopaynxKY/giphy.gif"
+                   alt="N Ō R Y E perfume"
+                   class="img-fluid norye-hero-gif"
+                   loading="eager">
+            </div>
           </div>
         </div>
       </div>
@@ -192,13 +202,13 @@
           <div class="py-4">
             <svg width="38" height="38" viewBox="0 0 24 24"><use xlink:href="#gift"></use></svg>
             <h4 class="element-title text-capitalize my-3">Inspired by Icons</h4>
-            <p>Captures the essence of the world's most loved fragrances.</p>
+            <p>Captures the essence of the world's most loved perfumes.</p>
           </div>
         </div>
         <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="300">
           <div class="py-4">
             <svg width="38" height="38" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
-            <h4 class="element-title text-capitalize my-3">For Him and Her</h4>
+            <h4 class="element-title text-capitalize my-3">Men &amp; Women</h4>
             <p>Curated scent profiles for every style and every moment.</p>
           </div>
         </div>
@@ -217,22 +227,24 @@
     <div class="container">
       <div class="norye-section-header text-center mx-auto">
         <h2 class="text-uppercase">Shop by Category</h2>
-        <p>Explore our curated collections for him and her.</p>
+        <p>Explore our curated men's and women's perfume lines.</p>
       </div>
       <div class="row g-4">
         <div class="col-md-6" data-aos="fade-up">
-          <a href="#men" class="norye-category-tile d-block text-decoration-none">
-            <img id="men-category-image" src="images/N%2023.jpeg" alt="For Him">
+          <a href="men.html" class="norye-category-tile d-block text-decoration-none">
+            <img id="men-category-image" src="images/N%2023.jpeg" alt="Men's Collection">
             <div class="norye-category-overlay">
-              <span class="btn btn-norye-gold">For Him</span>
+              <span class="norye-category-label">Men's Collection</span>
+              <span class="norye-category-cta">Shop Now</span>
             </div>
           </a>
         </div>
         <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
-          <a href="#women" class="norye-category-tile d-block text-decoration-none">
-            <img id="women-category-image" src="images/N%2012.jpeg" alt="For Her">
+          <a href="women.html" class="norye-category-tile d-block text-decoration-none">
+            <img id="women-category-image" src="images/N%2012.jpeg" alt="Women's Collection">
             <div class="norye-category-overlay">
-              <span class="btn btn-norye-gold">For Her</span>
+              <span class="norye-category-label">Women's Collection</span>
+              <span class="norye-category-cta">Shop Now</span>
             </div>
           </a>
         </div>
@@ -247,7 +259,7 @@
           <h2 class="text-uppercase">Featured Perfumes</h2>
           <p>Our most loved olfactory designs, crafted to impress.</p>
         </div>
-        <a href="https://www.instagram.com/norye_line/" target="_blank" rel="noopener" class="btn-link">Order on Instagram</a>
+        <a href="https://wa.me/message/VVDJKHWHBAGGI1" target="_blank" rel="noopener" class="btn-link">Order Now</a>
       </div>
       <div class="swiper product-swiper open-up" data-aos="zoom-out">
         <div class="swiper-wrapper d-flex"></div>
@@ -273,26 +285,6 @@
     </div>
   </section>
 
-  <section id="men" class="norye-section norye-section-alt">
-    <div class="container">
-      <div class="norye-section-header">
-        <h2 class="text-uppercase">For Him</h2>
-        <p>Bold, refined and effortlessly memorable masculine inspirations.</p>
-      </div>
-      <div class="row g-4" id="men-grid"></div>
-    </div>
-  </section>
-
-  <section id="women" class="norye-section">
-    <div class="container">
-      <div class="norye-section-header">
-        <h2 class="text-uppercase">For Her</h2>
-        <p>Elegant florals, luminous ambers and timeless feminine icons.</p>
-      </div>
-      <div class="row g-4" id="women-grid"></div>
-    </div>
-  </section>
-
   <section id="about" class="norye-quote py-5 norye-section-alt">
     <div class="container">
       <div class="row justify-content-center">
@@ -300,8 +292,8 @@
           <blockquote class="norye-blockquote">
             <p class="lead fst-italic">"Some things are too good to leave behind. N Ō R Y E is definitely one of them."</p>
           </blockquote>
-          <p class="mt-4">Love the scent profiles of Baccarat Rouge 540, My Way, Tom Ford, Creed Aventus, Lancôme Trésor Midnight Rose, Stronger With You, YSL Libre, Prada Paradoxe, La Vie Est Belle, Gucci Guilty, or Khamrah?</p>
-          <p>N Ō R Y E has carefully crafted fragrance inspirations that capture the essence of these timeless scents, so you can enjoy the feeling of your favorites wherever life takes you.</p>
+          <p class="mt-4 norye-about-copy">Love the scent profiles of Baccarat Rouge 540, My Way, Tom Ford, Creed Aventus, Lancôme Trésor Midnight Rose, Stronger With You, YSL Libre, Prada Paradoxe, La Vie Est Belle, Gucci Guilty, or Khamrah?</p>
+          <p class="norye-about-copy">N Ō R Y E has carefully crafted perfume inspirations that capture the essence of these timeless scents, so you can enjoy the feeling of your favorites wherever life takes you.</p>
         </div>
       </div>
     </div>
@@ -334,7 +326,7 @@
             <div class="footer-intro mb-4">
               <a href="index.html"><span class="norye-logo norye-logo-footer">N <span class="norye-o">Ō</span> R Y E</span></a>
             </div>
-            <p>Olfactory Design Line. Inspired by iconic fragrances for men and women. Carefully crafted 30ML Eau de Parfum inspirations from Ksh 1,299/=.</p>
+            <p>Olfactory Design Line. Inspired by iconic perfumes for men and women. Carefully crafted 30ML Eau de Parfum inspirations from Ksh 1,299/=.</p>
             <div class="social-links">
               <ul class="list-unstyled d-flex flex-wrap gap-3">
                 <li>
@@ -351,8 +343,8 @@
             <h5 class="widget-title text-uppercase mb-4">Quick Links</h5>
             <ul class="menu-list list-unstyled text-uppercase border-animation-left fs-6">
               <li class="menu-item"><a href="#billboard" class="item-anchor">Home</a></li>
-              <li class="menu-item"><a href="#men" class="item-anchor">Men</a></li>
-              <li class="menu-item"><a href="#women" class="item-anchor">Women</a></li>
+              <li class="menu-item"><a href="men.html" class="item-anchor">Men</a></li>
+              <li class="menu-item"><a href="women.html" class="item-anchor">Women</a></li>
               <li class="menu-item"><a href="#best-sellers" class="item-anchor">Best Sellers</a></li>
               <li class="menu-item"><a href="#featured" class="item-anchor">Featured</a></li>
               <li class="menu-item"><a href="https://www.instagram.com/norye_line/" target="_blank" rel="noopener" class="item-anchor">Instagram</a></li>

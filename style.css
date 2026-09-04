@@ -284,6 +284,54 @@ a {
 
 .preloader.loaded {
   height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.norye-preloader-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--heading-font);
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  letter-spacing: 0.18em;
+}
+
+.norye-preloader-letter {
+  opacity: 0;
+  transform: translateY(28px);
+  animation: noryePreloaderLetter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.norye-preloader-letter:nth-child(1) { animation-delay: 0.08s; }
+.norye-preloader-letter:nth-child(2) { animation-delay: 0.16s; }
+.norye-preloader-letter:nth-child(3) { animation-delay: 0.24s; }
+.norye-preloader-letter:nth-child(4) { animation-delay: 0.32s; }
+.norye-preloader-letter:nth-child(5) { animation-delay: 0.4s; }
+
+.norye-preloader-o {
+  color: var(--norye-gold);
+}
+
+@keyframes noryePreloaderLetter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body.homepage.norye-loading > :not(.preloader) {
+  opacity: 0;
+}
+
+body.homepage.norye-ready > :not(.preloader) {
+  opacity: 1;
+  transition: opacity 0.55s ease 0.05s;
+}
+
+body.homepage.norye-loading {
+  overflow: hidden;
 }
 
 /* navbar */
@@ -1623,16 +1671,17 @@ a.btn-link.text-light:after {
 
 /* Premium store refinements */
 :root {
-  --norye-gold: #C9A962;
-  --norye-gold-dark: #A68B4B;
-  --norye-gold-light: #E8D5A3;
+  --norye-gold: #845826;
+  --norye-gold-dark: #6B4520;
+  --norye-gold-light: #A67A3D;
   --norye-white: #FFFFFF;
   --norye-off-white: #FAFAF8;
   --norye-border: #EDE8DF;
 }
 
 body.homepage,
-body.product-page {
+body.product-page,
+body.collection-page {
   background: var(--norye-white);
 }
 
@@ -1665,8 +1714,24 @@ body.product-page {
 }
 
 .norye-section-header p {
-  color: #777;
+  color: #555;
   max-width: 560px;
+}
+
+.norye-body-copy {
+  color: #3a3a3a;
+  line-height: 1.75;
+}
+
+.norye-about-copy {
+  color: #333;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.norye-instagram-cta h3 {
+  color: #1a1a1a;
+  letter-spacing: 0.14em;
 }
 
 .norye-hero {
@@ -1677,14 +1742,75 @@ body.product-page {
 .norye-hero-tagline {
   font-family: var(--heading-font);
   font-style: italic;
-  color: #666;
+  color: #444;
   font-size: 1.15rem;
 }
 
 .norye-hero-image {
   background: var(--norye-off-white);
   border: 1px solid var(--norye-border);
-  padding: 2rem;
+  padding: 1.5rem;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.norye-hero-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid var(--norye-gold-light);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+  aspect-ratio: 4 / 5;
+  max-height: 480px;
+  margin: 0 auto;
+  background: linear-gradient(145deg, #FAFAF8 0%, #F3EDE3 100%);
+}
+
+.norye-hero-media::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 28px;
+  height: 28px;
+  border-top: 2px solid var(--norye-gold);
+  border-left: 2px solid var(--norye-gold);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.norye-hero-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(250, 250, 248, 0.85) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.norye-hero-gif {
+  width: 100%;
+  height: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92) contrast(1.02);
+  animation: noryeHeroScaleIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes noryeHeroScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+body.norye-ready .norye-hero-gif {
+  animation: none;
 }
 
 .norye-hero-image img {
@@ -1700,25 +1826,28 @@ body.product-page {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.85rem 1.75rem;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .btn-norye-gold:hover {
-  background: var(--norye-gold-dark);
-  border-color: var(--norye-gold-dark);
-  color: #fff;
+  background: transparent;
+  border-color: var(--norye-gold);
+  color: var(--norye-gold-dark);
 }
 
 .btn-norye-outline {
   background: transparent;
-  border: 1px solid var(--norye-gold-dark);
+  border: 1px solid var(--norye-gold);
   color: var(--norye-gold-dark);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.85rem 1.75rem;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .btn-norye-outline:hover {
-  background: var(--norye-gold-dark);
+  background: var(--norye-gold);
+  border-color: var(--norye-gold);
   color: #fff;
 }
 
@@ -1734,11 +1863,33 @@ body.product-page {
   background-color: var(--norye-gold-dark) !important;
 }
 
+.norye-collection-hero {
+  background: linear-gradient(180deg, var(--norye-off-white) 0%, var(--norye-white) 100%);
+  padding: 4rem 0 3rem;
+  border-bottom: 1px solid var(--norye-border);
+}
+
+.norye-collection-hero h1 {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.75rem;
+}
+
+.norye-collection-hero p {
+  color: #3a3a3a;
+  max-width: 560px;
+  line-height: 1.75;
+}
+
 .norye-category-tile {
   position: relative;
   overflow: hidden;
   border: 1px solid var(--norye-border);
   background: var(--norye-off-white);
+  display: block;
+  min-height: 0;
+  isolation: isolate;
+  z-index: 0;
 }
 
 .norye-category-tile img {
@@ -1756,16 +1907,64 @@ body.product-page {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 2rem;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.92) 100%);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 1.75rem 2rem;
+  background: linear-gradient(180deg, transparent 55%, rgba(17, 17, 17, 0.55) 100%);
+  transition: background 0.35s ease;
+  pointer-events: none;
+}
+
+.norye-category-overlay * {
+  pointer-events: none;
+}
+
+.norye-category-tile:hover .norye-category-overlay {
+  background: linear-gradient(180deg, transparent 45%, rgba(17, 17, 17, 0.68) 100%);
+}
+
+.norye-category-label {
+  color: #fff;
+  font-family: var(--heading-font);
+  font-size: 1.35rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.norye-category-label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--norye-gold);
+  transition: width 0.35s ease, background 0.35s ease;
+}
+
+.norye-category-tile:hover .norye-category-label::after {
+  width: 3.5rem;
+  background: var(--norye-gold-light);
+}
+
+.norye-category-cta {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
 .norye-product-card {
   background: var(--norye-white);
   border: 1px solid var(--norye-border);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .norye-product-card:hover {
@@ -1780,6 +1979,66 @@ body.product-page {
   overflow: hidden;
 }
 
+.norye-product-card-media {
+  position: relative;
+  overflow: hidden;
+}
+
+.norye-add-cart {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%) translateY(12px);
+  z-index: 3;
+  background: var(--norye-gold);
+  border: 1px solid var(--norye-gold);
+  color: #fff;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.15rem;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  white-space: nowrap;
+}
+
+.norye-add-cart::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.35rem;
+  width: 0;
+  height: 1px;
+  background: var(--norye-gold-light);
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.norye-product-card:hover .norye-add-cart,
+.norye-product-card:focus-within .norye-add-cart {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.norye-add-cart:hover {
+  background: transparent;
+  color: var(--norye-gold);
+  border-color: var(--norye-gold);
+  transform: translateX(-50%) translateY(-2px) scale(1.03);
+}
+
+.norye-add-cart:hover::after {
+  width: 70%;
+}
+
+.norye-add-cart.is-added {
+  background: var(--norye-gold-dark);
+  border-color: var(--norye-gold-dark);
+  color: #fff;
+  opacity: 1;
+}
+
 .norye-product-card-image img {
   width: 100%;
   height: 280px;
@@ -1792,7 +2051,11 @@ body.product-page {
 }
 
 .norye-product-card-body {
-  padding: 1.25rem;
+  padding: 1.35rem 1.25rem 1.25rem;
+  border-top: 2px solid var(--norye-gold);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .norye-product-number {
@@ -1803,25 +2066,63 @@ body.product-page {
 }
 
 .norye-product-title {
-  font-size: 1rem;
-  margin-bottom: 0.35rem;
+  font-family: var(--heading-font);
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.06em;
 }
 
 .norye-product-title a {
-  color: var(--heading-color);
+  color: var(--norye-gold-dark);
   text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.norye-product-title a:hover {
+  color: var(--norye-gold);
+}
+
+.norye-product-card-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.35rem;
 }
 
 .norye-product-inspired {
-  font-size: 0.85rem;
-  color: #888;
-  margin-bottom: 0.75rem;
+  font-size: 0.78rem;
+  color: #666;
+  margin: 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .norye-product-price {
   color: var(--norye-gold-dark);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
   margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.norye-product-details {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--norye-gold);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.norye-product-details:hover {
+  color: var(--norye-gold-dark);
+  border-bottom-color: var(--norye-gold-dark);
 }
 
 .norye-badge {
@@ -1915,6 +2216,32 @@ body.product-page {
   color: var(--norye-gold-dark);
 }
 
+.norye-cart-remove {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0;
+  cursor: pointer;
+}
+
+.norye-cart-remove:hover {
+  color: var(--norye-gold-dark);
+}
+
+#cart-empty {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.search-no-results {
+  color: #888;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
 @media (max-width: 767px) {
   .norye-section {
     padding: 3.5rem 0;
@@ -1925,7 +2252,293 @@ body.product-page {
     height: 220px;
   }
 
+  .norye-hero-media {
+    max-height: 320px;
+  }
+
+  .norye-hero-gif,
   .norye-hero-image img {
     max-height: 320px;
   }
+
+  .norye-add-cart {
+    font-size: 0.62rem;
+    padding: 0.5rem 0.9rem;
+  }
+
+  .norye-category-label {
+    font-size: 1.1rem;
+  }
+}
+
+/* Norye search panel overrides */
+.search-popup {
+  background-color: rgba(17, 17, 17, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 5rem 1rem 2rem;
+}
+
+.search-popup.is-visible {
+  cursor: default;
+}
+
+.search-popup-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  max-width: 560px;
+  width: 100%;
+  padding: 1.75rem 1.5rem 1.25rem;
+  text-align: left;
+  top: auto;
+  transform: none;
+}
+
+.is-visible .search-popup-container {
+  transform: none;
+}
+
+.search-popup-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+}
+
+.search-popup-close:hover {
+  color: var(--norye-gold-dark);
+  transform: none;
+}
+
+.norye-search-form {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.norye-search-form .form-control {
+  font-size: 1rem;
+  height: auto;
+  padding: 0.65rem 2.5rem 0.65rem 0;
+  border: none;
+  border-bottom: 2px solid var(--norye-border);
+  border-radius: 0;
+  background: transparent;
+}
+
+.norye-search-form .form-control:focus {
+  box-shadow: none;
+  border-bottom-color: var(--norye-gold);
+}
+
+.norye-search-form .search-submit {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--norye-gold-dark);
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.search-popup .cat-list-title {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: #888;
+}
+
+.search-popup .cat-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.search-popup .cat-list-item {
+  display: block;
+  font-size: 1rem;
+  margin: 0;
+  border-bottom: 1px solid var(--norye-border);
+}
+
+.search-popup .cat-list-item::after {
+  display: none;
+}
+
+.search-popup .cat-list-item a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem 0.25rem;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.search-popup .cat-list-item a::after {
+  display: none;
+}
+
+.search-popup .cat-list-item a:hover {
+  background: var(--norye-off-white);
+}
+
+.norye-search-number {
+  color: var(--norye-gold-dark);
+  font-family: var(--heading-font);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+}
+
+.norye-search-inspired {
+  color: #666;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.search-popup .search-no-results {
+  padding: 1rem 0.25rem;
+}
+
+/* Navbar action buttons */
+.norye-nav-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--norye-border);
+  border-radius: 50%;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.norye-nav-btn:hover {
+  border-color: var(--norye-gold);
+  color: var(--norye-gold-dark);
+  box-shadow: 0 0 0 3px rgba(132, 88, 38, 0.12);
+}
+
+.norye-nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--norye-gold);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}
+
+.norye-nav-badge:empty {
+  display: none;
+}
+
+.cart-count:empty {
+  display: none;
+}
+
+/* Cart panel */
+.norye-cart-panel {
+  width: min(380px, 92vw);
+  border-left: 3px solid var(--norye-gold);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.08);
+}
+
+.norye-cart-panel .offcanvas-header {
+  border-bottom: 1px solid var(--norye-border);
+  padding: 1.25rem 1.5rem;
+}
+
+.norye-cart-panel .offcanvas-title {
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  margin: 0;
+}
+
+.norye-cart-panel .offcanvas-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.norye-cart-item {
+  border-color: var(--norye-border) !important;
+  padding: 1rem 0.25rem;
+}
+
+.norye-cart-qty {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.norye-qty-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--norye-border);
+  background: #fff;
+  color: #333;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.norye-qty-btn:hover {
+  border-color: var(--norye-gold);
+  color: var(--norye-gold-dark);
+}
+
+.norye-qty-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.norye-cart-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--norye-border);
+}
+
+.norye-checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.norye-checkout-form .form-control {
+  font-size: 0.875rem;
+  border-color: var(--norye-border);
+  border-radius: 0;
+}
+
+.norye-checkout-form .form-control:focus {
+  border-color: var(--norye-gold);
+  box-shadow: 0 0 0 2px rgba(132, 88, 38, 0.1);
+}
+
+.norye-checkout-error {
+  color: #c0392b;
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+  min-height: 1.2em;
 }

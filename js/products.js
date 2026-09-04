@@ -1,3 +1,5 @@
+const NORYE_ORDER_URL = "https://wa.me/message/VVDJKHWHBAGGI1";
+
 const NORYE_PRODUCTS = [
   {
     code: "n12",
