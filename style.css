@@ -1845,6 +1845,84 @@ body.collection-page {
   color: var(--norye-gold-dark);
 }
 
+@media (max-width: 991.98px) {
+  .norye-navbar-inner {
+    justify-content: space-between;
+  }
+
+  .norye-navbar-inner .navbar-brand {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-right: 0.75rem;
+  }
+
+  .norye-logo {
+    font-size: clamp(0.85rem, 3.8vw, 1rem);
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+  }
+
+  .norye-navbar-actions {
+    flex-shrink: 0;
+    margin-left: 0;
+  }
+
+  .norye-navbar-actions .navbar-toggler {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--norye-border);
+    border-radius: 50%;
+  }
+
+  .norye-navbar-actions .navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(132, 88, 38, 0.12);
+  }
+
+  #offcanvasNavbar {
+    width: min(320px, 88vw);
+  }
+
+  #offcanvasNavbar .nav-link {
+    padding: 0.75rem 0;
+  }
+
+  .norye-offcanvas-action {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .norye-offcanvas-action:hover,
+  .norye-offcanvas-action:focus {
+    color: var(--norye-gold-dark) !important;
+  }
+
+  .norye-offcanvas-cart-count:not(:empty) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.35rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: var(--norye-gold);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+}
+
 .features {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -2404,6 +2482,30 @@ body.norye-ready .norye-hero-gif {
 @media (max-width: 767px) {
   .norye-section {
     padding: 2.5rem 0;
+  }
+
+  .norye-hero .d-flex.flex-wrap.gap-3 {
+    justify-content: center;
+  }
+
+  .norye-hero .btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .norye-product-card-body {
+    padding: 1rem 0.85rem;
+  }
+
+  .norye-product-inspired {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .search-popup-container {
+    padding: 1.25rem 1rem 1.5rem;
+    max-height: 92vh;
+    overflow-y: auto;
   }
 
   .norye-product-card-image img,

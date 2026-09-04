@@ -6,6 +6,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/jpeg" href="images/WEB%20DESIGN%20THEME.jpeg">
+  <link rel="apple-touch-icon" href="images/WEB%20DESIGN%20THEME.jpeg">
   <meta name="format-detection" content="telephone=no">
   <meta name="author" content="N Ō R Y E">
   <meta name="description" content="N Ō R Y E perfume details. Inspired by iconic scents. 30ML Eau de Parfum from Ksh 1,299.">
@@ -93,10 +95,7 @@
           <li class="nav-item"><a class="nav-link" href="index.html#footer">Contact</a></li>
         </ul>
         <div class="norye-navbar-actions">
-          <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <ul class="list-unstyled d-flex m-0 align-items-center gap-2 norye-nav-actions">
+          <ul class="list-unstyled d-none d-lg-flex m-0 align-items-center gap-2 norye-nav-actions">
             <li class="norye-nav-action">
               <button type="button" class="norye-nav-btn search-button" aria-label="Search">
                 <svg width="20" height="20" viewBox="0 0 24 24"><use xlink:href="#search"></use></svg>
@@ -109,6 +108,9 @@
               </button>
             </li>
           </ul>
+          <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Open menu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
         </div>
       </div>
     </div>
@@ -128,6 +130,12 @@
           <li class="nav-item"><a class="nav-link" href="index.html#best-sellers">Best Sellers</a></li>
           <li class="nav-item"><a class="nav-link" href="index.html#featured">Featured</a></li>
           <li class="nav-item"><a class="nav-link" href="index.html#footer">Contact</a></li>
+          <li class="nav-item mt-3 pt-3 border-top">
+            <button type="button" class="nav-link norye-offcanvas-action" data-open-search-from-menu data-bs-dismiss="offcanvas">Search</button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link norye-offcanvas-action" data-open-cart-from-menu data-bs-dismiss="offcanvas">Cart <span class="norye-offcanvas-cart-count cart-count"></span></button>
+          </li>
         </ul>
       </div>
     </div>

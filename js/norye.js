@@ -365,6 +365,38 @@
     if (popup) popup.classList.remove("is-visible");
   }
 
+  function openSearchPopup() {
+    var popup = document.querySelector(".search-popup");
+    var input = document.getElementById("search-form");
+    if (!popup) return;
+    popup.classList.add("is-visible");
+    if (input) {
+      input.value = "";
+      renderSearchResults(NORYE_PRODUCTS);
+      window.setTimeout(function () {
+        input.focus();
+      }, 100);
+    }
+  }
+
+  function initMobileMenuActions() {
+    document.querySelectorAll("[data-open-search-from-menu]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        window.setTimeout(function () {
+          openSearchPopup();
+        }, 320);
+      });
+    });
+
+    document.querySelectorAll("[data-open-cart-from-menu]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        window.setTimeout(function () {
+          openCartPanel();
+        }, 320);
+      });
+    });
+  }
+
   function initSearch() {
     var input = document.getElementById("search-form");
     var form = input ? input.closest("form") : null;
@@ -549,6 +581,7 @@
     initSearch();
     initCheckoutForm();
     initNavDropdownHover();
+    initMobileMenuActions();
     renderCartUI();
     if (!document.body.classList.contains("homepage")) {
       dismissPreloader();
