@@ -114,34 +114,31 @@
 
   <nav class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center">
     <div class="container-fluid">
-      <div class="row justify-content-between align-items-center w-100">
+      <div class="row justify-content-between align-items-center w-100 g-0">
         <div class="col-auto">
           <a class="navbar-brand" href="index.html">
             <span class="norye-logo">N <span class="norye-o">Ō</span> R Y E</span>
           </a>
         </div>
-        <div class="col-auto">
-          <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+        <div class="col norye-navbar-center d-none d-lg-flex">
+          <ul class="navbar-nav justify-content-center gap-1 gap-md-4 mx-auto">
+            <li class="nav-item"><a class="nav-link active" href="#billboard">Home</a></li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Collections</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="men.html">Men</a></li>
+                <li><a class="dropdown-item" href="women.html">Women</a></li>
+              </ul>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#best-sellers">Best Sellers</a></li>
+            <li class="nav-item"><a class="nav-link" href="#featured">Featured</a></li>
+            <li class="nav-item"><a class="nav-link" href="#footer">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-auto d-flex align-items-center gap-2">
+          <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-            <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
-              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-              <ul class="navbar-nav justify-content-end flex-grow-1 gap-1 gap-md-4 pe-3">
-                <li class="nav-item"><a class="nav-link active" href="#billboard">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="men.html">Men</a></li>
-                <li class="nav-item"><a class="nav-link" href="women.html">Women</a></li>
-                <li class="nav-item"><a class="nav-link" href="#best-sellers">Best Sellers</a></li>
-                <li class="nav-item"><a class="nav-link" href="#featured">Featured</a></li>
-                <li class="nav-item"><a class="nav-link" href="#footer">Contact</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="col-auto ms-auto">
           <ul class="list-unstyled d-flex m-0 align-items-center gap-2 norye-nav-actions">
             <li class="norye-nav-action">
               <button type="button" class="norye-nav-btn search-button" aria-label="Search">
@@ -156,6 +153,25 @@
             </li>
           </ul>
         </div>
+      </div>
+    </div>
+    <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav gap-1">
+          <li class="nav-item"><a class="nav-link active" href="#billboard" data-bs-dismiss="offcanvas">Home</a></li>
+          <li class="nav-item">
+            <span class="nav-link text-muted small">Collections</span>
+          </li>
+          <li class="nav-item ps-3"><a class="nav-link" href="men.html">Men</a></li>
+          <li class="nav-item ps-3"><a class="nav-link" href="women.html">Women</a></li>
+          <li class="nav-item"><a class="nav-link" href="#best-sellers" data-bs-dismiss="offcanvas">Best Sellers</a></li>
+          <li class="nav-item"><a class="nav-link" href="#featured" data-bs-dismiss="offcanvas">Featured</a></li>
+          <li class="nav-item"><a class="nav-link" href="#footer" data-bs-dismiss="offcanvas">Contact</a></li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -188,7 +204,7 @@
     </div>
   </section>
 
-  <section class="features py-5 border-top border-bottom" style="border-color: var(--norye-border) !important;">
+  <section class="features py-4 border-top border-bottom" style="border-color: var(--norye-border) !important;">
     <div class="container">
       <div class="row">
         <div class="col-md-3 text-center" data-aos="fade-in">
@@ -259,7 +275,7 @@
           <h2 class="text-uppercase">Featured Perfumes</h2>
           <p>Our most loved olfactory designs, crafted to impress.</p>
         </div>
-        <a href="https://wa.me/message/VVDJKHWHBAGGI1" target="_blank" rel="noopener" class="btn-link">Order Now</a>
+        <a href="https://wa.me/254721754234" target="_blank" rel="noopener" class="btn-link">Order Now</a>
       </div>
       <div class="swiper product-swiper open-up" data-aos="zoom-out">
         <div class="swiper-wrapper d-flex"></div>

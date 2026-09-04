@@ -1,4 +1,5 @@
-const NORYE_ORDER_URL = "https://wa.me/message/VVDJKHWHBAGGI1";
+const NORYE_WHATSAPP_PHONE = "254721754234";
+const NORYE_ORDER_URL = "https://wa.me/" + NORYE_WHATSAPP_PHONE;
 
 const NORYE_PRODUCTS = [
   {

@@ -1695,8 +1695,43 @@ body.collection-page {
   color: var(--norye-gold-dark) !important;
 }
 
+.norye-navbar-center {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.norye-navbar-center .navbar-nav {
+  width: 100%;
+}
+
+.norye-navbar-center .dropdown-menu {
+  border-color: var(--norye-border);
+  border-radius: 0;
+  padding: 0.35rem 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.norye-navbar-center .dropdown-item {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.25rem;
+}
+
+.norye-navbar-center .dropdown-item:hover,
+.norye-navbar-center .dropdown-item:focus,
+.norye-navbar-center .dropdown-item.active {
+  background: var(--norye-off-white);
+  color: var(--norye-gold-dark);
+}
+
+.features {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .norye-section {
-  padding: 5rem 0;
+  padding: 3rem 0;
 }
 
 .norye-section-alt {
@@ -1704,7 +1739,7 @@ body.collection-page {
 }
 
 .norye-section-header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .norye-section-header h2 {
@@ -1736,7 +1771,7 @@ body.collection-page {
 
 .norye-hero {
   background: linear-gradient(180deg, var(--norye-off-white) 0%, var(--norye-white) 100%);
-  padding: 4rem 0 5rem;
+  padding: 2.5rem 0 3rem;
 }
 
 .norye-hero-tagline {
@@ -2022,14 +2057,15 @@ body.norye-ready .norye-hero-gif {
 }
 
 .norye-add-cart:hover {
-  background: transparent;
-  color: var(--norye-gold);
-  border-color: var(--norye-gold);
-  transform: translateX(-50%) translateY(-2px) scale(1.03);
+  background: var(--norye-gold-dark);
+  color: #fff;
+  border-color: var(--norye-gold-dark);
+  transform: translateX(-50%) translateY(-4px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 .norye-add-cart:hover::after {
-  width: 70%;
+  width: 0;
 }
 
 .norye-add-cart.is-added {
@@ -2244,7 +2280,7 @@ body.norye-ready .norye-hero-gif {
 
 @media (max-width: 767px) {
   .norye-section {
-    padding: 3.5rem 0;
+    padding: 2.5rem 0;
   }
 
   .norye-product-card-image img,
@@ -2332,6 +2368,12 @@ body.norye-ready .norye-hero-gif {
   border-bottom: 2px solid var(--norye-border);
   border-radius: 0;
   background: transparent;
+  color: #1a1a1a;
+}
+
+.norye-search-form .form-control::placeholder {
+  color: #666;
+  opacity: 1;
 }
 
 .norye-search-form .form-control:focus {
@@ -2529,6 +2571,13 @@ body.norye-ready .norye-hero-gif {
   font-size: 0.875rem;
   border-color: var(--norye-border);
   border-radius: 0;
+  color: #1a1a1a;
+  background-color: #fff;
+}
+
+.norye-checkout-form .form-control::placeholder {
+  color: #666;
+  opacity: 1;
 }
 
 .norye-checkout-form .form-control:focus {

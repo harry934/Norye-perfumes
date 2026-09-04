@@ -14,7 +14,41 @@
   }
 
   function orderUrl() {
-    return typeof NORYE_ORDER_URL !== "undefined" ? NORYE_ORDER_URL : "https://wa.me/message/VVDJKHWHBAGGI1";
+    if (typeof NORYE_WHATSAPP_PHONE !== "undefined" && NORYE_WHATSAPP_PHONE) {
+      return "https://wa.me/" + NORYE_WHATSAPP_PHONE;
+    }
+    return typeof NORYE_ORDER_URL !== "undefined" ? NORYE_ORDER_URL : "https://wa.me/254721754234";
+  }
+
+  function buildOrderMessage(checkout) {
+    var cart = getCart();
+    var lines = ["*N Ō R Y E Order*", "", "Items:"];
+
+    cart.forEach(function (item) {
+      var product = getProductByCode(item.code);
+      if (!product) return;
+      lines.push(
+        "- " + product.number + " · " + product.inspiredBy +
+        " x" + item.qty + " — " + formatPrice(item.qty * ITEM_PRICE)
+      );
+    });
+
+    lines.push("");
+    lines.push("Total: " + formatPrice(getCartTotal(cart)));
+    lines.push("");
+    lines.push("Name: " + checkout.name);
+    lines.push("Phone: " + checkout.phone);
+    lines.push("Delivery: " + checkout.location);
+    if (checkout.notes) {
+      lines.push("Notes: " + checkout.notes);
+    }
+
+    return lines.join("\n");
+  }
+
+  function buildWhatsAppOrderUrl(checkoutOverride) {
+    var checkout = checkoutOverride || getCheckout();
+    return orderUrl() + "?text=" + encodeURIComponent(buildOrderMessage(checkout));
   }
 
   function normalizeCart(raw) {
@@ -132,33 +166,6 @@
     return "Ksh " + amount.toLocaleString();
   }
 
-  function buildWhatsAppOrderUrl() {
-    var cart = getCart();
-    var checkout = getCheckout();
-    var lines = ["*N Ō R Y E Order*", "", "Items:"];
-
-    cart.forEach(function (item) {
-      var product = getProductByCode(item.code);
-      if (!product) return;
-      lines.push(
-        "- " + product.number + " · " + product.inspiredBy +
-        " x" + item.qty + " — " + formatPrice(item.qty * ITEM_PRICE)
-      );
-    });
-
-    lines.push("");
-    lines.push("Total: " + formatPrice(getCartTotal(cart)));
-    lines.push("");
-    lines.push("Name: " + checkout.name);
-    lines.push("Phone: " + checkout.phone);
-    lines.push("Delivery: " + checkout.location);
-    if (checkout.notes) {
-      lines.push("Notes: " + checkout.notes);
-    }
-
-    return orderUrl() + "?text=" + encodeURIComponent(lines.join("\n"));
-  }
-
   function renderCartUI() {
     var cart = getCart();
     var count = getCartItemCount(cart);
@@ -256,9 +263,9 @@
 
         saveCheckout({ name: name, phone: phone, location: location, notes: notes });
 
-        if (!name.trim() || !phone.trim()) {
+        if (!name.trim() || !phone.trim() || !location.trim()) {
           if (errorEl) {
-            errorEl.textContent = "Please enter your name and phone number.";
+            errorEl.textContent = "Please enter your name, phone, and delivery location.";
           }
           return;
         }
@@ -268,8 +275,18 @@
           return;
         }
 
-        if (errorEl) errorEl.textContent = "";
-        window.open(buildWhatsAppOrderUrl(), "_blank", "noopener");
+        var checkout = { name: name, phone: phone, location: location, notes: notes };
+        var message = buildOrderMessage(checkout);
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(message).catch(function () {});
+        }
+
+        if (errorEl) {
+          errorEl.textContent = "Opening WhatsApp with your order details…";
+        }
+
+        window.open(buildWhatsAppOrderUrl(checkout), "_blank", "noopener");
       });
     }
   }
