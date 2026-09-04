@@ -547,33 +547,53 @@
     }).join("");
   }
 
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function finishIntroReveal(intro) {
+    if (intro) {
+      intro.classList.add("is-opening", "is-done");
+      intro.setAttribute("aria-hidden", "true");
+    }
+    document.body.classList.remove("norye-loading");
+    document.body.classList.add("norye-ready");
+
+    var heroTitle = document.getElementById("hero-title");
+    if (heroTitle) heroTitle.classList.add("aos-animate");
+
+    document.querySelectorAll("#billboard [data-aos]").forEach(function (el) {
+      el.classList.add("aos-animate");
+    });
+
+    if (typeof AOS !== "undefined") {
+      AOS.init({ once: true, duration: 700, offset: 60 });
+    }
+  }
+
   function initIntroAnimations() {
-    var preloader = document.querySelector(".preloader");
+    var intro = document.getElementById("noryeIntro");
 
     document.body.classList.add("norye-loading");
 
+    if (prefersReducedMotion()) {
+      finishIntroReveal(intro);
+      return;
+    }
+
     window.setTimeout(function () {
-      if (preloader) {
-        preloader.classList.add("loaded");
-      }
-      document.body.classList.remove("norye-loading");
-      document.body.classList.add("norye-ready");
+      if (intro) intro.classList.add("is-opening");
+    }, 600);
 
-      document.querySelectorAll("#billboard [data-aos]").forEach(function (el) {
-        el.classList.add("aos-animate");
-      });
-
-      if (typeof AOS !== "undefined") {
-        AOS.init({ once: true, duration: 700, offset: 60 });
-      }
-    }, 1200);
+    window.setTimeout(function () {
+      finishIntroReveal(intro);
+    }, 1400);
   }
 
   function dismissPreloader() {
-    var preloader = document.querySelector(".preloader");
-    if (preloader) {
-      preloader.classList.add("loaded");
-    }
+    var intro = document.getElementById("noryeIntro");
+    if (!intro || intro.classList.contains("is-done")) return;
+    finishIntroReveal(intro);
   }
 
   function initGlobal() {

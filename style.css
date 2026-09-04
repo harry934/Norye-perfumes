@@ -269,33 +269,61 @@ a {
 
 /* end of Bootstrap Color Theme */
 
-/* preloader */
-.preloader {
+/* homepage curtain intro */
+.norye-intro {
   position: fixed;
-  z-index: 99;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: all;
+}
+
+.norye-intro-curtain {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
   background: #111;
-  width: 100vw;
-  height: 100vh;
+  transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.norye-intro-curtain-left {
+  left: 0;
+}
+
+.norye-intro-curtain-right {
+  right: 0;
+}
+
+.norye-intro.is-opening .norye-intro-curtain-left {
+  transform: translateX(-100%);
+}
+
+.norye-intro.is-opening .norye-intro-curtain-right {
+  transform: translateX(100%);
+}
+
+.norye-intro-brand {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: height 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
-}
-
-.preloader.loaded {
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-.norye-preloader-brand {
-  display: flex;
-  align-items: center;
-  gap: 0;
+  z-index: 2;
   font-family: var(--heading-font);
   font-size: clamp(2rem, 6vw, 3.25rem);
   letter-spacing: 0.06em;
+  transition: opacity 0.4s ease;
+}
+
+.norye-intro.is-opening .norye-intro-brand {
+  opacity: 0;
+}
+
+.norye-intro.is-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0s 0.3s;
 }
 
 .norye-preloader-letter {
@@ -321,17 +349,60 @@ a {
   }
 }
 
-body.homepage.norye-loading > :not(.preloader) {
+.norye-hero-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+body.homepage.norye-ready .norye-hero-reveal {
+  animation: noryeHeroReveal 0.7s ease forwards;
+}
+
+body.homepage.norye-ready .norye-hero-reveal-1 { animation-delay: 0.05s; }
+body.homepage.norye-ready .norye-hero-reveal-2 { animation-delay: 0.15s; }
+body.homepage.norye-ready .norye-hero-reveal-3 { animation-delay: 0.25s; }
+body.homepage.norye-ready .norye-hero-reveal-4 { animation-delay: 0.35s; }
+body.homepage.norye-ready .norye-hero-reveal-5 { animation-delay: 0.45s; }
+body.homepage.norye-ready .norye-hero-reveal-6 { animation-delay: 0.55s; }
+
+@keyframes noryeHeroReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body.homepage.norye-loading > :not(.norye-intro) {
   opacity: 0;
 }
 
-body.homepage.norye-ready > :not(.preloader) {
+body.homepage.norye-ready > :not(.norye-intro) {
   opacity: 1;
   transition: opacity 0.55s ease 0.05s;
 }
 
 body.homepage.norye-loading {
   overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .norye-intro-curtain {
+    transition: none;
+  }
+
+  .norye-intro-brand {
+    transition: none;
+  }
+
+  .norye-hero-reveal {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  body.homepage.norye-ready > :not(.norye-intro) {
+    transition: none;
+  }
 }
 
 body.collection-page.norye-page-loading,
