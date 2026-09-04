@@ -462,8 +462,16 @@
       badge = '<span class="norye-badge norye-badge-bestseller">Best Seller</span>';
     }
 
+    var colClass = "col-6 col-md-4 col-lg-3";
+    var colAttrs = 'class="' + colClass;
+    if (options.animate) {
+      colAttrs += ' norye-card-reveal" style="--reveal-delay: ' + ((options.index || 0) * 80) + 'ms"';
+    } else {
+      colAttrs += '"';
+    }
+
     return (
-      '<div class="col-6 col-md-4 col-lg-3">' +
+      "<div " + colAttrs + ">" +
         '<div class="norye-product-card h-100">' +
           renderProductCardMedia(product, badge) +
           renderProductCardBody(product) +
@@ -491,10 +499,11 @@
   }
 
   function renderGrid(containerId, products, options) {
+    options = options || {};
     var container = document.getElementById(containerId);
     if (!container) return;
-    container.innerHTML = products.map(function (p) {
-      return renderProductCard(p, options);
+    container.innerHTML = products.map(function (p, index) {
+      return renderProductCard(p, Object.assign({}, options, { index: index }));
     }).join("");
   }
 
@@ -539,6 +548,7 @@
     bindCartEvents();
     initSearch();
     initCheckoutForm();
+    initNavDropdownHover();
     renderCartUI();
     if (!document.body.classList.contains("homepage")) {
       dismissPreloader();
@@ -613,11 +623,56 @@
     }
   }
 
+  function initPageReveal(callback) {
+    document.body.classList.add("norye-page-loading");
+
+    window.setTimeout(function () {
+      document.body.classList.remove("norye-page-loading");
+      document.body.classList.add("norye-page-ready");
+      revealAosElements();
+      if (typeof callback === "function") {
+        callback();
+      }
+    }, 150);
+  }
+
+  function initImageLoadFade(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    var images = scope.querySelectorAll(".norye-product-card-image img, .norye-detail-image img");
+
+    images.forEach(function (img) {
+      function markLoaded() {
+        img.classList.add("is-loaded");
+        var wrapper = img.closest(".norye-product-card-image, .norye-detail-image");
+        if (wrapper) wrapper.classList.add("is-loaded");
+      }
+
+      if (img.complete && img.naturalWidth > 0) {
+        markLoaded();
+      } else {
+        img.addEventListener("load", markLoaded);
+        img.addEventListener("error", markLoaded);
+      }
+    });
+  }
+
+  function initNavDropdownHover() {
+    if (window.matchMedia("(max-width: 991.98px)").matches) return;
+
+    document.querySelectorAll(".norye-navbar-center .dropdown-toggle").forEach(function (toggle) {
+      toggle.addEventListener("click", function (e) {
+        e.preventDefault();
+      });
+    });
+  }
+
   function initCollectionPage() {
     var category = document.body.dataset.collection;
     if (!category) return;
-    renderGrid("collection-grid", getProductsByCategory(category));
-    revealAosElements();
+
+    renderGrid("collection-grid", getProductsByCategory(category), { animate: true });
+    initImageLoadFade(document.getElementById("collection-grid"));
+    initPageReveal();
   }
 
   function getQueryParam(name) {
@@ -639,14 +694,15 @@
           '<p class="mb-4">We could not find that perfume. Browse our collection instead.</p>' +
           '<a href="index.html#featured" class="btn btn-norye-gold">View Collection</a>' +
         "</div>";
+      initPageReveal();
       return;
     }
 
     document.title = product.name + " | N Ō R Y E";
 
     var related = getRelatedProducts(product, 4);
-    var relatedHtml = related.map(function (p) {
-      return renderProductCard(p);
+    var relatedHtml = related.map(function (p, index) {
+      return renderProductCard(p, { animate: true, index: index });
     }).join("");
 
     root.innerHTML =
@@ -690,6 +746,9 @@
     if (openCartBtn) {
       openCartBtn.addEventListener("click", openCartPanel);
     }
+
+    initImageLoadFade(root);
+    initPageReveal();
   }
 
   document.addEventListener("DOMContentLoaded", function () {
