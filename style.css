@@ -282,24 +282,74 @@ a {
   top: 0;
   width: 50%;
   height: 100%;
-  background: #111;
+  background: linear-gradient(135deg, #1c1814 0%, #12100e 45%, #0d0c0b 100%);
+  overflow: hidden;
   transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.norye-intro-curtain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0%, transparent 40%, rgba(0, 0, 0, 0.15) 100%);
+  pointer-events: none;
+}
+
+.norye-intro-curtain-fold {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.18) 0,
+      rgba(0, 0, 0, 0.18) 1px,
+      transparent 1px,
+      transparent 28px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.03) 0,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 56px
+    );
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 .norye-intro-curtain-left {
   left: 0;
+  box-shadow: inset -10px 0 28px rgba(0, 0, 0, 0.5);
 }
 
 .norye-intro-curtain-right {
   right: 0;
+  box-shadow: inset 10px 0 28px rgba(0, 0, 0, 0.5);
+}
+
+.norye-intro-seam {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px;
+  height: 100%;
+  margin-left: -3px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.6));
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.norye-intro.is-opening .norye-intro-seam {
+  opacity: 0;
 }
 
 .norye-intro.is-opening .norye-intro-curtain-left {
-  transform: translateX(-100%);
+  transform: translateX(-100%) scaleX(1.02);
 }
 
 .norye-intro.is-opening .norye-intro-curtain-right {
-  transform: translateX(100%);
+  transform: translateX(100%) scaleX(1.02);
 }
 
 .norye-intro-brand {
@@ -1750,6 +1800,10 @@ a.btn-link.text-light:after {
   font-size: clamp(2rem, 5vw, 3.5rem);
 }
 
+#hero-title .norye-o {
+  color: var(--norye-gold);
+}
+
 .letter-spacing-sm {
   letter-spacing: 0.1em;
 }
@@ -1826,6 +1880,14 @@ body.collection-page {
 .navbar.bg-light {
   background: var(--norye-white) !important;
   border-bottom: 1px solid var(--norye-border) !important;
+}
+
+.norye-navbar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: var(--norye-white);
+  box-shadow: 0 1px 0 var(--norye-border);
 }
 
 .nav-link.active,
@@ -2749,6 +2811,82 @@ body.norye-ready .norye-hero-gif {
 }
 
 /* Navbar action buttons */
+.norye-nav-search-wrap {
+  position: relative;
+}
+
+.norye-nav-search {
+  position: relative;
+}
+
+.norye-nav-search-input {
+  width: 200px;
+  height: 38px;
+  padding: 0 0.85rem 0 2rem;
+  border: 1px solid var(--norye-border);
+  border-radius: 999px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23885826' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 0.65rem center;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: #333;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.norye-nav-search-input::placeholder {
+  color: #999;
+  text-transform: none;
+}
+
+.norye-nav-search-input:focus {
+  outline: none;
+  border-color: var(--norye-gold);
+  box-shadow: 0 0 0 3px rgba(132, 88, 38, 0.12);
+}
+
+.norye-nav-search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--norye-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 1040;
+}
+
+.norye-nav-search-results .cat-list-item {
+  padding: 0;
+}
+
+.norye-nav-search-results .cat-list-item a {
+  display: block;
+  padding: 0.55rem 1rem;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.78rem;
+  text-transform: none;
+  letter-spacing: 0.03em;
+}
+
+.norye-nav-search-results .cat-list-item a:hover {
+  background: rgba(132, 88, 38, 0.08);
+  color: var(--norye-gold-dark);
+}
+
+.norye-nav-search-results .search-no-results {
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  color: #666;
+  text-transform: none;
+}
+
 .norye-nav-btn {
   position: relative;
   display: inline-flex;

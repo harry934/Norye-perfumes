@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <nav class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center">
+  <nav class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center sticky-top norye-navbar-sticky">
     <div class="container-fluid">
       <div class="norye-navbar-inner">
         <a class="navbar-brand" href="index.html">
@@ -96,10 +96,11 @@
         </ul>
         <div class="norye-navbar-actions">
           <ul class="list-unstyled d-none d-lg-flex m-0 align-items-center gap-2 norye-nav-actions">
-            <li class="norye-nav-action">
-              <button type="button" class="norye-nav-btn search-button" aria-label="Search">
-                <svg width="20" height="20" viewBox="0 0 24 24"><use xlink:href="#search"></use></svg>
-              </button>
+            <li class="norye-nav-action norye-nav-search-wrap">
+              <div class="norye-nav-search">
+                <input type="search" id="nav-search-input" class="norye-nav-search-input" placeholder="Search perfumes..." aria-label="Search perfumes" autocomplete="off">
+                <ul class="norye-nav-search-results" id="nav-search-results" hidden></ul>
+              </div>
             </li>
             <li class="norye-nav-action">
               <button type="button" class="norye-nav-btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" aria-label="Cart">

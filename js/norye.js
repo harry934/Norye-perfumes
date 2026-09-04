@@ -335,8 +335,7 @@
     });
   }
 
-  function renderSearchResults(products) {
-    var list = document.getElementById("search-product-list");
+  function renderSearchResults(products, list) {
     if (!list) return;
 
     if (!products.length) {
@@ -356,6 +355,71 @@
     }).join("");
   }
 
+  function bindSearchInput(input, list, options) {
+    if (!input || !list) return;
+
+    options = options || {};
+
+    function showResults() {
+      if (list.hasAttribute("hidden")) list.removeAttribute("hidden");
+    }
+
+    function hideResults() {
+      list.setAttribute("hidden", "");
+    }
+
+    input.addEventListener("input", function () {
+      renderSearchResults(filterProducts(input.value), list);
+      showResults();
+    });
+
+    input.addEventListener("focus", function () {
+      renderSearchResults(filterProducts(input.value), list);
+      showResults();
+    });
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        input.value = "";
+        hideResults();
+        input.blur();
+      }
+    });
+
+    input.addEventListener("blur", function () {
+      window.setTimeout(function () {
+        hideResults();
+      }, 180);
+    });
+
+    list.addEventListener("mousedown", function (e) {
+      e.preventDefault();
+    });
+
+    list.addEventListener("click", function (e) {
+      var link = e.target.closest("a[data-product-code]");
+      if (!link) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (options.onNavigate) options.onNavigate();
+      navigateToProduct(link.getAttribute("data-product-code"));
+    });
+
+    if (options.form) {
+      options.form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var results = filterProducts(input.value);
+        if (results.length >= 1) {
+          if (options.onNavigate) options.onNavigate();
+          navigateToProduct(results[0].code);
+        } else {
+          renderSearchResults(results, list);
+          showResults();
+        }
+      });
+    }
+  }
+
   function navigateToProduct(code) {
     window.location.href = productUrl(code);
   }
@@ -372,7 +436,7 @@
     popup.classList.add("is-visible");
     if (input) {
       input.value = "";
-      renderSearchResults(NORYE_PRODUCTS);
+      renderSearchResults(NORYE_PRODUCTS, document.getElementById("search-product-list"));
       window.setTimeout(function () {
         input.focus();
       }, 100);
@@ -398,52 +462,28 @@
   }
 
   function initSearch() {
-    var input = document.getElementById("search-form");
-    var form = input ? input.closest("form") : null;
-    var list = document.getElementById("search-product-list");
+    var popupInput = document.getElementById("search-form");
+    var popupForm = popupInput ? popupInput.closest("form") : null;
+    var popupList = document.getElementById("search-product-list");
+    var navInput = document.getElementById("nav-search-input");
+    var navList = document.getElementById("nav-search-results");
     var popup = document.querySelector(".search-popup");
     var closeBtn = document.querySelector(".search-popup-close");
 
-    if (!input || !list) return;
+    if (popupList) {
+      renderSearchResults(NORYE_PRODUCTS, popupList);
+    }
 
-    renderSearchResults(NORYE_PRODUCTS);
-
-    input.addEventListener("input", function () {
-      renderSearchResults(filterProducts(input.value));
-    });
-
-    if (form) {
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        var results = filterProducts(input.value);
-        if (results.length >= 1) {
-          navigateToProduct(results[0].code);
-        } else {
-          renderSearchResults(results);
-        }
+    if (popupInput && popupList) {
+      bindSearchInput(popupInput, popupList, {
+        form: popupForm,
+        onNavigate: closeSearchPopup
       });
     }
 
-    list.addEventListener("click", function (e) {
-      var link = e.target.closest("a[data-product-code]");
-      if (!link) return;
-      e.preventDefault();
-      e.stopPropagation();
-      closeSearchPopup();
-      navigateToProduct(link.getAttribute("data-product-code"));
-    });
-
-    document.querySelectorAll(".search-button").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        window.setTimeout(function () {
-          if (popup && popup.classList.contains("is-visible")) {
-            input.value = "";
-            renderSearchResults(NORYE_PRODUCTS);
-            input.focus();
-          }
-        }, 50);
-      });
-    });
+    if (navInput && navList) {
+      bindSearchInput(navInput, navList);
+    }
 
     if (closeBtn) {
       closeBtn.addEventListener("click", function (e) {
@@ -558,9 +598,6 @@
     }
     document.body.classList.remove("norye-loading");
     document.body.classList.add("norye-ready");
-
-    var heroTitle = document.getElementById("hero-title");
-    if (heroTitle) heroTitle.classList.add("aos-animate");
 
     document.querySelectorAll("#billboard [data-aos]").forEach(function (el) {
       el.classList.add("aos-animate");

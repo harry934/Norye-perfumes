@@ -66,8 +66,13 @@
   </svg>
 
   <div class="norye-intro text-white fs-6 text-uppercase" id="noryeIntro" aria-hidden="true">
-    <div class="norye-intro-curtain norye-intro-curtain-left"></div>
-    <div class="norye-intro-curtain norye-intro-curtain-right"></div>
+    <div class="norye-intro-curtain norye-intro-curtain-left">
+      <div class="norye-intro-curtain-fold"></div>
+    </div>
+    <div class="norye-intro-curtain norye-intro-curtain-right">
+      <div class="norye-intro-curtain-fold"></div>
+    </div>
+    <div class="norye-intro-seam" aria-hidden="true"></div>
     <div class="norye-intro-brand" aria-hidden="true">
       <span class="norye-preloader-letter">N</span>
       <span class="norye-preloader-letter norye-preloader-o">Ō</span>
@@ -116,7 +121,7 @@
     </div>
   </div>
 
-  <nav class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center">
+  <nav class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center sticky-top norye-navbar-sticky">
     <div class="container-fluid">
       <div class="norye-navbar-inner">
         <a class="navbar-brand" href="index.html">
@@ -137,10 +142,11 @@
         </ul>
         <div class="norye-navbar-actions">
           <ul class="list-unstyled d-none d-lg-flex m-0 align-items-center gap-2 norye-nav-actions">
-            <li class="norye-nav-action">
-              <button type="button" class="norye-nav-btn search-button" aria-label="Search">
-                <svg width="20" height="20" viewBox="0 0 24 24"><use xlink:href="#search"></use></svg>
-              </button>
+            <li class="norye-nav-action norye-nav-search-wrap">
+              <div class="norye-nav-search">
+                <input type="search" id="nav-search-input" class="norye-nav-search-input" placeholder="Search perfumes..." aria-label="Search perfumes" autocomplete="off">
+                <ul class="norye-nav-search-results" id="nav-search-results" hidden></ul>
+              </div>
             </li>
             <li class="norye-nav-action">
               <button type="button" class="norye-nav-btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" aria-label="Cart">
@@ -186,7 +192,7 @@
     <div class="container">
       <div class="row align-items-center g-5">
         <div class="col-lg-6 text-center text-lg-start">
-          <h1 class="section-title norye-hero-title txt-fx domino mb-3 norye-hero-reveal norye-hero-reveal-1" id="hero-title">N Ō R Y E</h1>
+          <h1 class="section-title norye-hero-title mb-2 norye-hero-reveal norye-hero-reveal-1" id="hero-title">N<span class="norye-o">Ō</span>RYE</h1>
           <p class="text-uppercase letter-spacing-sm mb-3 norye-hero-reveal norye-hero-reveal-2">Olfactory Design Line</p>
           <p class="norye-hero-tagline mb-4 norye-hero-reveal norye-hero-reveal-3">You know those fine things that exist and somehow everyone notices?</p>
           <p class="mb-4 norye-body-copy norye-hero-reveal norye-hero-reveal-4">Inspired by iconic perfumes. Slip it into your bag, keep it close, and refresh your scent whenever the moment calls for it.</p>
@@ -386,14 +392,7 @@
     </div>
     <div class="border-top py-4">
       <div class="container">
-        <div class="row">
-          <div class="col-md-6">
-            <p class="mb-0">© Copyright 2026 N Ō R Y E. All rights reserved.</p>
-          </div>
-          <div class="col-md-6 text-md-end">
-            <p class="mb-0">Design by <a href="https://templatesjungle.com" target="_blank" rel="noopener">TemplatesJungle</a></p>
-          </div>
-        </div>
+        <p class="mb-0 text-center">© Copyright 2026 N Ō R Y E. All rights reserved.</p>
       </div>
     </div>
   </footer>
