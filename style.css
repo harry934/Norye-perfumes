@@ -1695,13 +1695,46 @@ body.collection-page {
   color: var(--norye-gold-dark) !important;
 }
 
-.norye-navbar-center {
-  flex: 1 1 auto;
-  min-width: 0;
+.norye-navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  min-height: 42px;
 }
 
-.norye-navbar-center .navbar-nav {
-  width: 100%;
+.norye-navbar-inner .navbar-brand {
+  position: relative;
+  z-index: 2;
+  margin-right: 0;
+}
+
+.norye-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.norye-navbar-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+@media (min-width: 992px) {
+  .norye-navbar-center {
+    gap: 1.5rem;
+  }
 }
 
 .norye-navbar-center .dropdown-menu {

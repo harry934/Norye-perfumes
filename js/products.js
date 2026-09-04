@@ -166,21 +166,6 @@ const NORYE_PRODUCTS = [
     bestSeller: true,
     description: "Rich, spicy and warmly sweet. An oriental gourmand with serious depth and lasting presence.",
     notes: "Cinnamon, dates, praline, vanilla, amber"
-  },
-  {
-    code: "n92",
-    number: "N°92",
-    name: "N Ō R Y E N°92",
-    category: "women",
-    categoryLabel: "Women",
-    inspiredBy: "Lancôme La Nuit Trésor",
-    price: "Ksh 1,299/=",
-    size: "30ML Eau de Parfum",
-    image: "images/N%2092.jpeg",
-    featured: false,
-    bestSeller: false,
-    description: "A dark, velvety rose laced with vanilla and patchouli. Romantic, intense and unforgettable.",
-    notes: "Rose, vanilla orchid, patchouli, praline"
   }
 ];
 
