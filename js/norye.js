@@ -816,7 +816,7 @@
             '<p class="norye-detail-price">' + product.price + "</p>" +
             '<p class="norye-detail-description">' + product.description + "</p>" +
             (product.notes ? '<p class="norye-detail-notes"><strong>Perfume notes:</strong> ' + product.notes + "</p>" : "") +
-            '<div class="d-flex flex-wrap gap-3 mt-4">' +
+            '<div class="d-flex flex-wrap gap-3 mt-4 norye-btn-pair">' +
               '<button type="button" class="btn btn-norye-gold" data-add-cart="' + product.code + '" data-open-cart>Add to Cart</button>' +
               '<button type="button" class="btn btn-norye-outline" id="detail-open-cart">View Cart</button>' +
             "</div>" +

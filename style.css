@@ -2217,6 +2217,47 @@ body.norye-ready .norye-hero-gif {
   color: #fff;
 }
 
+/* Paired buttons: hover one fills, sibling clears */
+.norye-btn-pair .btn-norye-gold {
+  background: var(--norye-gold);
+  border-color: var(--norye-gold);
+  color: #fff;
+}
+
+.norye-btn-pair .btn-norye-outline {
+  background: transparent;
+  border-color: var(--norye-gold);
+  color: var(--norye-gold-dark);
+}
+
+.norye-btn-pair:has(.btn-norye-gold:hover) .btn-norye-gold,
+.norye-btn-pair:has(.btn-norye-gold:focus-visible) .btn-norye-gold {
+  background: var(--norye-gold);
+  border-color: var(--norye-gold);
+  color: #fff;
+}
+
+.norye-btn-pair:has(.btn-norye-gold:hover) .btn-norye-outline,
+.norye-btn-pair:has(.btn-norye-gold:focus-visible) .btn-norye-outline {
+  background: transparent;
+  border-color: var(--norye-gold);
+  color: var(--norye-gold-dark);
+}
+
+.norye-btn-pair:has(.btn-norye-outline:hover) .btn-norye-outline,
+.norye-btn-pair:has(.btn-norye-outline:focus-visible) .btn-norye-outline {
+  background: var(--norye-gold);
+  border-color: var(--norye-gold);
+  color: #fff;
+}
+
+.norye-btn-pair:has(.btn-norye-outline:hover) .btn-norye-gold,
+.norye-btn-pair:has(.btn-norye-outline:focus-visible) .btn-norye-gold {
+  background: transparent;
+  border-color: var(--norye-gold);
+  color: var(--norye-gold-dark);
+}
+
 .btn-primary {
   --bs-btn-bg: var(--norye-gold);
   --bs-btn-border-color: var(--norye-gold);
