@@ -781,24 +781,15 @@
     var veil = ensurePageVeil();
     var reduced = prefersReducedMotion();
 
-    if (!reduced) {
-      veil.classList.add("is-active");
-    }
-
     function tryDismissVeil() {
-      if (
-        document.body.classList.contains("norye-ready") ||
-        document.body.classList.contains("norye-page-ready")
-      ) {
-        dismissPageVeil();
-      }
+      dismissPageVeil();
     }
 
-    var observer = new MutationObserver(tryDismissVeil);
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     window.addEventListener("load", function () {
-      window.setTimeout(tryDismissVeil, 50);
+      dismissPageVeil();
     });
+
+    window.setTimeout(dismissPageVeil, 1800);
 
     if (reduced) return;
 
@@ -809,7 +800,7 @@
 
       e.preventDefault();
       var destination = new URL(link.getAttribute("href"), window.location.href).href;
-      veil.classList.add("is-active", "is-leaving");
+      veil.classList.add("is-leaving");
       window.setTimeout(function () {
         window.location.href = destination;
       }, 320);

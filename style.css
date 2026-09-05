@@ -466,7 +466,10 @@ body.homepage.norye-loading {
     opacity: 0 !important;
   }
 
-  .norye-page-veil,
+  .norye-page-veil {
+    display: none !important;
+  }
+
   .norye-cart-fly,
   .norye-cart-item.is-entering,
   .norye-cart-item.is-removing,
@@ -3699,17 +3702,16 @@ body.collection-page {
   z-index: 10000;
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
   background: linear-gradient(135deg, rgba(250, 246, 238, 0.98) 0%, rgba(212, 175, 110, 0.35) 100%);
-  transition: opacity 0.32s ease;
+  transition: opacity 0.32s ease, visibility 0.32s ease;
 }
 
-.norye-page-veil.is-active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
+.norye-page-veil.is-active,
 .norye-page-veil.is-leaving {
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 /* Fly to cart */
