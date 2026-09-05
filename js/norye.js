@@ -3,6 +3,11 @@
 
   var CART_KEY = "norye-cart";
   var ITEM_PRICE = 1299;
+  var COLLECTION_VIEW_KEY = "norye-collection-view";
+  var awakenHeroShowcase = null;
+  var lastCartCodes = [];
+  var cartUiInitialized = false;
+  var priceRevealObserver = null;
 
   function productUrl(code) {
     return "product.html?code=" + encodeURIComponent(code);
@@ -115,6 +120,60 @@
     }
   }
 
+  function flyToCart(sourceEl, productCode) {
+    if (prefersReducedMotion() || !sourceEl) return;
+
+    var product = getProductByCode(productCode);
+    if (!product) return;
+
+    var cartBtn = document.querySelector('.norye-nav-btn[data-bs-target="#offcanvasCart"]');
+    if (!cartBtn) return;
+
+    var sourceRect = sourceEl.getBoundingClientRect();
+    var targetRect = cartBtn.getBoundingClientRect();
+    var startX = sourceRect.left + sourceRect.width / 2;
+    var startY = sourceRect.top + sourceRect.height / 2;
+    var endX = targetRect.left + targetRect.width / 2;
+    var endY = targetRect.top + targetRect.height / 2;
+
+    var fly = document.createElement("div");
+    fly.className = "norye-cart-fly";
+    fly.innerHTML = '<img src="' + product.image + '" alt="">';
+    fly.style.left = startX + "px";
+    fly.style.top = startY + "px";
+    document.body.appendChild(fly);
+
+    var startTime = null;
+    var duration = 600;
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var eased = easeOutCubic(progress);
+      var x = startX + (endX - startX) * eased;
+      var y = startY + (endY - startY) * eased;
+      var scale = 1 - eased * 0.6;
+      fly.style.transform = "translate(-50%, -50%) translate(" + (x - startX) + "px, " + (y - startY) + "px) scale(" + scale + ")";
+      fly.style.opacity = String(1 - eased * 0.35);
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        fly.remove();
+        cartBtn.classList.add("is-bumped");
+        window.setTimeout(function () {
+          cartBtn.classList.remove("is-bumped");
+        }, 400);
+      }
+    }
+
+    window.requestAnimationFrame(step);
+  }
+
   function addToCart(code, options) {
     options = options || {};
     var cart = getCart();
@@ -128,14 +187,18 @@
     renderCartUI();
     if (options.openCart) openCartPanel();
     if (options.button) {
+      flyToCart(options.button, code);
       var btn = options.button;
+      if (btn.classList.contains("is-added")) return;
       var original = btn.textContent;
-      btn.textContent = "Added";
+      btn.textContent = "Added ✓";
       btn.classList.add("is-added");
+      btn.disabled = true;
       window.setTimeout(function () {
         btn.textContent = original;
         btn.classList.remove("is-added");
-      }, 1400);
+        btn.disabled = false;
+      }, 2000);
     }
   }
 
@@ -168,6 +231,15 @@
   function renderCartUI() {
     var cart = getCart();
     var count = getCartItemCount(cart);
+    var prevCodes = lastCartCodes.slice();
+    var newCodes = cart.map(function (item) {
+      return item.code;
+    });
+    var addedCodes = cartUiInitialized
+      ? newCodes.filter(function (code) {
+          return prevCodes.indexOf(code) === -1;
+        })
+      : [];
 
     document.querySelectorAll(".cart-count").forEach(function (el) {
       el.textContent = count > 0 ? String(count) : "";
@@ -189,6 +261,8 @@
 
     if (count === 0) {
       list.innerHTML = "";
+      lastCartCodes = [];
+      cartUiInitialized = true;
       if (empty) empty.hidden = false;
       if (content) content.hidden = true;
       if (errorEl) errorEl.textContent = "";
@@ -229,6 +303,22 @@
         "</li>"
       );
     }).join("");
+
+    if (!prefersReducedMotion() && addedCodes.length) {
+      addedCodes.forEach(function (code) {
+        var removeBtn = list.querySelector('[data-remove-cart="' + code + '"]');
+        if (!removeBtn) return;
+        var item = removeBtn.closest(".norye-cart-item");
+        if (!item) return;
+        item.classList.add("is-entering");
+        item.addEventListener("animationend", function () {
+          item.classList.remove("is-entering");
+        }, { once: true });
+      });
+    }
+
+    lastCartCodes = newCodes;
+    cartUiInitialized = true;
 
     var cartTotal = getCartTotal(cart);
     if (totalEl) totalEl.textContent = formatPrice(cartTotal);
@@ -316,7 +406,16 @@
       var removeBtn = e.target.closest("[data-remove-cart]");
       if (removeBtn) {
         e.preventDefault();
-        removeFromCart(removeBtn.getAttribute("data-remove-cart"));
+        var code = removeBtn.getAttribute("data-remove-cart");
+        var item = removeBtn.closest(".norye-cart-item");
+        if (item && !prefersReducedMotion() && !item.classList.contains("is-removing")) {
+          item.classList.add("is-removing");
+          window.setTimeout(function () {
+            removeFromCart(code);
+          }, 280);
+        } else {
+          removeFromCart(code);
+        }
       }
     });
   }
@@ -597,6 +696,7 @@
     }
     document.body.classList.remove("norye-loading");
     document.body.classList.add("norye-ready");
+    dismissPageVeil();
 
     document.querySelectorAll("#billboard [data-aos]").forEach(function (el) {
       el.classList.add("aos-animate");
@@ -604,6 +704,10 @@
 
     if (typeof AOS !== "undefined") {
       AOS.init({ once: true, duration: 700, offset: 60 });
+    }
+
+    if (typeof awakenHeroShowcase === "function") {
+      window.setTimeout(awakenHeroShowcase, 250);
     }
   }
 
@@ -632,13 +736,180 @@
     finishIntroReveal(intro);
   }
 
+  function ensurePageVeil() {
+    var veil = document.getElementById("norye-page-veil");
+    if (veil) return veil;
+
+    veil = document.createElement("div");
+    veil.id = "norye-page-veil";
+    veil.className = "norye-page-veil";
+    veil.setAttribute("aria-hidden", "true");
+    document.body.appendChild(veil);
+    return veil;
+  }
+
+  function dismissPageVeil() {
+    var veil = document.getElementById("norye-page-veil");
+    if (veil) {
+      veil.classList.remove("is-active", "is-leaving");
+    }
+  }
+
+  function isSameOriginPageLink(href) {
+    if (!href || href.charAt(0) === "#") return false;
+    if (/^(mailto:|tel:|javascript:)/i.test(href)) return false;
+    if (/instagram|whatsapp|wa\.me/i.test(href)) return false;
+
+    var target;
+    try {
+      target = new URL(href, window.location.href);
+    } catch (err) {
+      return false;
+    }
+
+    if (target.origin !== window.location.origin) return false;
+
+    var current = new URL(window.location.href);
+    if (target.pathname === current.pathname && target.search === current.search) {
+      return false;
+    }
+
+    return /\.html?$/i.test(target.pathname) || target.pathname === "/" || !/\./.test(target.pathname.split("/").pop());
+  }
+
+  function initPageTransitions() {
+    var veil = ensurePageVeil();
+    var reduced = prefersReducedMotion();
+
+    if (!reduced) {
+      veil.classList.add("is-active");
+    }
+
+    function tryDismissVeil() {
+      if (
+        document.body.classList.contains("norye-ready") ||
+        document.body.classList.contains("norye-page-ready")
+      ) {
+        dismissPageVeil();
+      }
+    }
+
+    var observer = new MutationObserver(tryDismissVeil);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("load", function () {
+      window.setTimeout(tryDismissVeil, 50);
+    });
+
+    if (reduced) return;
+
+    document.body.addEventListener("click", function (e) {
+      var link = e.target.closest("a[href]");
+      if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
+      if (!isSameOriginPageLink(link.getAttribute("href"))) return;
+
+      e.preventDefault();
+      var destination = new URL(link.getAttribute("href"), window.location.href).href;
+      veil.classList.add("is-active", "is-leaving");
+      window.setTimeout(function () {
+        window.location.href = destination;
+      }, 320);
+    });
+  }
+
+  function initPriceReveal(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    var prices = scope.querySelectorAll(
+      ".norye-product-price:not(.is-price-visible), .norye-detail-price:not(.is-price-visible)"
+    );
+    if (!prices.length) return;
+
+    if (prefersReducedMotion()) {
+      prices.forEach(function (el) {
+        el.classList.add("is-price-visible");
+      });
+      return;
+    }
+
+    if (!priceRevealObserver) {
+      priceRevealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-price-visible");
+            priceRevealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2, rootMargin: "0px 0px -20px 0px" });
+    }
+
+    prices.forEach(function (el) {
+      priceRevealObserver.observe(el);
+    });
+  }
+
+  function initScrollReveals() {
+    var features = document.querySelector(".features");
+    var pins = document.querySelectorAll(".norye-location-pin");
+
+    if (prefersReducedMotion()) {
+      if (features) features.classList.add("is-revealed");
+      pins.forEach(function (pin) {
+        pin.classList.add("is-visible");
+      });
+      return;
+    }
+
+    var scrollObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        if (entry.target.classList.contains("features")) {
+          entry.target.classList.add("is-revealed");
+        } else {
+          entry.target.classList.add("is-visible");
+        }
+        scrollObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.25 });
+
+    if (features) scrollObserver.observe(features);
+    pins.forEach(function (pin) {
+      scrollObserver.observe(pin);
+    });
+  }
+
+  function initCollectionViewToggle() {
+    var grid = document.getElementById("collection-grid");
+    var toggle = document.querySelector(".norye-view-toggle");
+    if (!grid || !toggle) return;
+
+    function applyCollectionView(view) {
+      grid.classList.toggle("norye-collection-view-list", view === "list");
+      toggle.querySelectorAll("[data-view]").forEach(function (btn) {
+        btn.classList.toggle("is-active", btn.getAttribute("data-view") === view);
+      });
+    }
+
+    applyCollectionView(sessionStorage.getItem(COLLECTION_VIEW_KEY) || "grid");
+
+    toggle.querySelectorAll("[data-view]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var view = btn.getAttribute("data-view");
+        sessionStorage.setItem(COLLECTION_VIEW_KEY, view);
+        applyCollectionView(view);
+        initPriceReveal(grid);
+      });
+    });
+  }
+
   function initGlobal() {
     clearLegacyCheckoutStorage();
+    ensurePageVeil();
+    initPageTransitions();
     bindCartEvents();
     initSearch();
     initCheckoutForm();
     initNavDropdownHover();
     initMobileMenuActions();
+    initScrollReveals();
     renderCartUI();
     if (!document.body.classList.contains("homepage")) {
       dismissPreloader();
@@ -669,9 +940,34 @@
     return list.slice(0, 5);
   }
 
+  function buildHeroShowcaseSlide(product, index, angleStep, extraClass) {
+    var className = "norye-hero-showcase-slide" + (extraClass ? " " + extraClass : "");
+    return (
+      '<a href="' + productUrl(product.code) + '" class="' + className + '" ' +
+        'style="transform: rotateY(' + (angleStep * index) + 'deg) translateZ(150px)" data-index="' + index + '">' +
+        '<span class="norye-hero-bottle">' +
+          '<img class="norye-hero-bottle-image" src="' + product.image + '" alt="' + product.name + '">' +
+          '<span class="norye-hero-bottle-reflection" aria-hidden="true">' +
+            '<img src="' + product.image + '" alt="" tabindex="-1">' +
+          "</span>" +
+        "</span>" +
+      "</a>"
+    );
+  }
+
+  function normalizeHeroIndex(index, count) {
+    return ((index % count) + count) % count;
+  }
+
+  function getHeroActiveIndex(rotation, count, angleStep) {
+    return normalizeHeroIndex(Math.round(-rotation / angleStep), count);
+  }
+
   function initHeroShowcase() {
     var ring = document.getElementById("hero-showcase-ring");
     var caption = document.getElementById("hero-showcase-caption");
+    var dots = document.getElementById("hero-showcase-dots");
+    var stage = document.getElementById("hero-showcase-stage");
     var showcase = document.getElementById("hero-showcase");
     if (!ring || !caption || !showcase) return;
 
@@ -680,48 +976,217 @@
 
     var reducedMotion = prefersReducedMotion();
     var staticProduct = getProductByCode("n23") || products[0];
+    var currentIndex = 0;
+    var rafId = 0;
 
     function setCaption(product) {
       caption.textContent = product.number + " — Inspired by " + product.inspiredBy;
     }
 
+    function renderDots(activeIndex) {
+      if (!dots) return;
+      dots.innerHTML = products.map(function (p, i) {
+        var isActive = i === activeIndex;
+        return (
+          '<button type="button" class="norye-hero-showcase-dot' + (isActive ? " is-active" : "") + '" ' +
+            'role="tab" aria-selected="' + isActive + '" aria-label="Show ' + p.number + '" data-index="' + i + '">' +
+          "</button>"
+        );
+      }).join("");
+    }
+
+    function updateSlideFocus(activeIndex) {
+      ring.querySelectorAll(".norye-hero-showcase-slide").forEach(function (slide) {
+        var slideIndex = Number(slide.getAttribute("data-index"));
+        slide.classList.toggle("is-front", slideIndex === activeIndex);
+      });
+    }
+
+    function updateActiveState(index, fadeCaption) {
+      currentIndex = normalizeHeroIndex(index, products.length);
+      updateSlideFocus(currentIndex);
+      if (fadeCaption) {
+        caption.classList.add("is-fading");
+        window.setTimeout(function () {
+          setCaption(products[currentIndex]);
+          caption.classList.remove("is-fading");
+        }, 220);
+      } else {
+        setCaption(products[currentIndex]);
+      }
+      renderDots(currentIndex);
+    }
+
     if (reducedMotion || products.length === 1) {
-      ring.innerHTML =
-        '<a href="' + productUrl(staticProduct.code) + '" class="norye-hero-showcase-slide is-static">' +
-          '<img src="' + staticProduct.image + '" alt="' + staticProduct.name + '">' +
-        "</a>";
-      setCaption(staticProduct);
-      showcase.classList.add("is-static");
+      ring.innerHTML = buildHeroShowcaseSlide(staticProduct, 0, 360, "is-static is-front");
+      updateActiveState(0, false);
+      if (dots) dots.hidden = true;
+      showcase.classList.add("is-static", "is-live");
       return;
     }
 
     var count = products.length;
     var angleStep = 360 / count;
-    var duration = count * 4;
+    var secondsPerBottle = 4;
+    var spinDurationMs = count * secondsPerBottle * 1000;
+    var rotationSpeed = 360 / spinDurationMs;
+    var rotation = 0;
+    var lastFrameTime = 0;
+    var autoPausedUntil = 0;
+    var touchStartX = 0;
+    var touchActive = false;
+    var isSnapping = false;
 
-    ring.style.setProperty("--norye-hero-count", String(count));
+    ring.style.animation = "none";
     ring.innerHTML = products.map(function (p, i) {
-      return (
-        '<a href="' + productUrl(p.code) + '" class="norye-hero-showcase-slide" ' +
-          'style="transform: rotateY(' + (angleStep * i) + 'deg) translateZ(150px)" data-index="' + i + '">' +
-          '<img src="' + p.image + '" alt="' + p.name + '">' +
-        "</a>"
-      );
+      return buildHeroShowcaseSlide(p, i, angleStep, "");
     }).join("");
 
-    ring.style.animationDuration = duration + "s";
+    showcase.classList.add("is-dormant");
 
-    var currentIndex = 0;
-    setCaption(products[currentIndex]);
+    function applyRotation() {
+      ring.style.transform = "rotateY(" + rotation + "deg)";
+    }
 
-    window.setInterval(function () {
-      currentIndex = (currentIndex + 1) % count;
-      caption.classList.add("is-fading");
+    function getClosestRotationForIndex(index) {
+      var baseTarget = -index * angleStep;
+      var candidates = [baseTarget, baseTarget + 360, baseTarget - 360];
+      return candidates.reduce(function (best, candidate) {
+        return Math.abs(candidate - rotation) < Math.abs(best - rotation) ? candidate : best;
+      }, candidates[0]);
+    }
+
+    function animateToIndex(index, fadeCaption) {
+      var targetRotation = getClosestRotationForIndex(index);
+      var startRotation = rotation;
+      var startTime = performance.now();
+      var duration = 480;
+      isSnapping = true;
+      pauseAutoSpin(5000);
+
+      function step(now) {
+        var progress = Math.min((now - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        rotation = startRotation + (targetRotation - startRotation) * eased;
+        applyRotation();
+        updateSlideFocus(getHeroActiveIndex(rotation, count, angleStep));
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          rotation = targetRotation;
+          isSnapping = false;
+          applyRotation();
+          updateActiveState(index, fadeCaption);
+        }
+      }
+
+      window.requestAnimationFrame(step);
+    }
+
+    function snapToNearest() {
+      animateToIndex(getHeroActiveIndex(rotation, count, angleStep), true);
+    }
+
+    function tick(timestamp) {
+      if (!lastFrameTime) lastFrameTime = timestamp;
+      var delta = timestamp - lastFrameTime;
+      lastFrameTime = timestamp;
+
+      if (
+        !touchActive &&
+        !isSnapping &&
+        showcase.classList.contains("is-live") &&
+        timestamp >= autoPausedUntil
+      ) {
+        rotation += rotationSpeed * delta;
+      }
+
+      applyRotation();
+
+      var activeIndex = getHeroActiveIndex(rotation, count, angleStep);
+      updateSlideFocus(activeIndex);
+      if (activeIndex !== currentIndex && !isSnapping) {
+        updateActiveState(activeIndex, true);
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    }
+
+    function pauseAutoSpin(ms) {
+      autoPausedUntil = performance.now() + ms;
+    }
+
+    awakenHeroShowcase = function () {
+      if (
+        showcase.classList.contains("is-static") ||
+        showcase.classList.contains("is-live") ||
+        showcase.classList.contains("is-awakening")
+      ) {
+        return;
+      }
+      showcase.classList.remove("is-dormant");
+      showcase.classList.add("is-awakening");
       window.setTimeout(function () {
-        setCaption(products[currentIndex]);
-        caption.classList.remove("is-fading");
-      }, 220);
-    }, (duration / count) * 1000);
+        showcase.classList.add("lights-left-on");
+      }, 100);
+      window.setTimeout(function () {
+        showcase.classList.add("lights-right-on");
+      }, 500);
+      window.setTimeout(function () {
+        showcase.classList.add("is-live");
+        showcase.classList.remove("is-awakening", "lights-left-on", "lights-right-on");
+      }, 1000);
+    };
+
+    updateActiveState(0, false);
+    applyRotation();
+    rafId = window.requestAnimationFrame(tick);
+
+    if (dots) {
+      dots.hidden = false;
+      dots.addEventListener("click", function (event) {
+        var button = event.target.closest(".norye-hero-showcase-dot");
+        if (!button) return;
+        var index = Number(button.getAttribute("data-index"));
+        if (Number.isNaN(index)) return;
+        animateToIndex(index, true);
+      });
+    }
+
+    if (stage) {
+      stage.addEventListener("touchstart", function (event) {
+        if (!event.changedTouches.length) return;
+        touchActive = true;
+        touchStartX = event.changedTouches[0].clientX;
+        pauseAutoSpin(6000);
+      }, { passive: true });
+
+      stage.addEventListener("touchmove", function (event) {
+        if (!touchActive || !event.changedTouches.length) return;
+        var touchX = event.changedTouches[0].clientX;
+        var deltaX = touchX - touchStartX;
+        if (Math.abs(deltaX) > 2) {
+          rotation += deltaX * 0.4;
+          touchStartX = touchX;
+          applyRotation();
+          var activeIndex = getHeroActiveIndex(rotation, count, angleStep);
+          updateSlideFocus(activeIndex);
+          if (activeIndex !== currentIndex) {
+            updateActiveState(activeIndex, true);
+          }
+        }
+      }, { passive: true });
+
+      stage.addEventListener("touchend", function () {
+        touchActive = false;
+        snapToNearest();
+        pauseAutoSpin(4000);
+      }, { passive: true });
+    }
+
+    window.addEventListener("beforeunload", function () {
+      if (rafId) window.cancelAnimationFrame(rafId);
+    });
   }
 
   function initHomepage() {
@@ -780,6 +1245,8 @@
         }
       });
     });
+
+    initPriceReveal();
   }
 
   function revealAosElements() {
@@ -798,7 +1265,9 @@
     window.setTimeout(function () {
       document.body.classList.remove("norye-page-loading");
       document.body.classList.add("norye-page-ready");
+      dismissPageVeil();
       revealAosElements();
+      initPriceReveal();
       if (typeof callback === "function") {
         callback();
       }
@@ -839,9 +1308,12 @@
     var category = document.body.dataset.collection;
     if (!category) return;
 
+    initCollectionViewToggle();
     renderGrid("collection-grid", getProductsByCategory(category), { animate: true });
     initImageLoadFade(document.getElementById("collection-grid"));
-    initPageReveal();
+    initPageReveal(function () {
+      initPriceReveal(document.getElementById("collection-grid"));
+    });
   }
 
   function getQueryParam(name) {
@@ -917,7 +1389,9 @@
     }
 
     initImageLoadFade(root);
-    initPageReveal();
+    initPageReveal(function () {
+      initPriceReveal(root);
+    });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
