@@ -215,13 +215,15 @@
               '<span class="norye-cart-item-inspired">' + product.inspiredBy + "</span>" +
             "</div>" +
             '<div class="norye-cart-item-controls">' +
-              '<div class="norye-cart-qty">' +
-                '<button type="button" class="norye-qty-btn" data-qty-minus="' + product.code + '" aria-label="Decrease quantity">−</button>' +
-                '<span class="norye-qty-value">' + item.qty + "</span>" +
-                '<button type="button" class="norye-qty-btn" data-qty-plus="' + product.code + '" aria-label="Increase quantity">+</button>' +
+              '<div class="norye-cart-item-row">' +
+                '<div class="norye-cart-qty">' +
+                  '<button type="button" class="norye-qty-btn" data-qty-minus="' + product.code + '" aria-label="Decrease quantity">−</button>' +
+                  '<span class="norye-qty-value">' + item.qty + "</span>" +
+                  '<button type="button" class="norye-qty-btn" data-qty-plus="' + product.code + '" aria-label="Increase quantity">+</button>' +
+                "</div>" +
+                '<span class="norye-cart-item-price">' + formatPrice(item.qty * ITEM_PRICE) + "</span>" +
               "</div>" +
-              '<span class="norye-cart-item-price">' + formatPrice(item.qty * ITEM_PRICE) + "</span>" +
-              '<button type="button" class="norye-cart-remove" data-remove-cart="' + product.code + '" aria-label="Remove item">&times;</button>' +
+              '<button type="button" class="norye-cart-remove" data-remove-cart="' + product.code + '">Remove</button>' +
             "</div>" +
           "</div>" +
         "</li>"
@@ -644,6 +646,84 @@
     window.addEventListener("load", dismissPreloader);
   }
 
+  function getHeroShowcaseProducts() {
+    var seen = {};
+    var list = [];
+
+    getFeaturedProducts().concat(getBestSellers()).forEach(function (p) {
+      if (!seen[p.code]) {
+        seen[p.code] = true;
+        list.push(p);
+      }
+    });
+
+    if (list.length < 4) {
+      NORYE_PRODUCTS.forEach(function (p) {
+        if (!seen[p.code] && list.length < 5) {
+          seen[p.code] = true;
+          list.push(p);
+        }
+      });
+    }
+
+    return list.slice(0, 5);
+  }
+
+  function initHeroShowcase() {
+    var ring = document.getElementById("hero-showcase-ring");
+    var caption = document.getElementById("hero-showcase-caption");
+    var showcase = document.getElementById("hero-showcase");
+    if (!ring || !caption || !showcase) return;
+
+    var products = getHeroShowcaseProducts();
+    if (!products.length) return;
+
+    var reducedMotion = prefersReducedMotion();
+    var staticProduct = getProductByCode("n23") || products[0];
+
+    function setCaption(product) {
+      caption.textContent = product.number + " — Inspired by " + product.inspiredBy;
+    }
+
+    if (reducedMotion || products.length === 1) {
+      ring.innerHTML =
+        '<a href="' + productUrl(staticProduct.code) + '" class="norye-hero-showcase-slide is-static">' +
+          '<img src="' + staticProduct.image + '" alt="' + staticProduct.name + '">' +
+        "</a>";
+      setCaption(staticProduct);
+      showcase.classList.add("is-static");
+      return;
+    }
+
+    var count = products.length;
+    var angleStep = 360 / count;
+    var duration = count * 4;
+
+    ring.style.setProperty("--norye-hero-count", String(count));
+    ring.innerHTML = products.map(function (p, i) {
+      return (
+        '<a href="' + productUrl(p.code) + '" class="norye-hero-showcase-slide" ' +
+          'style="transform: rotateY(' + (angleStep * i) + 'deg) translateZ(150px)" data-index="' + i + '">' +
+          '<img src="' + p.image + '" alt="' + p.name + '">' +
+        "</a>"
+      );
+    }).join("");
+
+    ring.style.animationDuration = duration + "s";
+
+    var currentIndex = 0;
+    setCaption(products[currentIndex]);
+
+    window.setInterval(function () {
+      currentIndex = (currentIndex + 1) % count;
+      caption.classList.add("is-fading");
+      window.setTimeout(function () {
+        setCaption(products[currentIndex]);
+        caption.classList.remove("is-fading");
+      }, 220);
+    }, (duration / count) * 1000);
+  }
+
   function initHomepage() {
     renderSwiper("featured", getFeaturedProducts(), { badge: "featured" });
     renderSwiper("best-sellers", getBestSellers(), { badge: "bestseller" });
@@ -655,6 +735,7 @@
     if (menCatImg && menProduct) menCatImg.src = menProduct.image;
     if (womenCatImg && womenProduct) womenCatImg.src = womenProduct.image;
 
+    initHeroShowcase();
     initIntroAnimations();
     window.addEventListener("load", initProductCarousels);
   }

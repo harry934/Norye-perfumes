@@ -453,6 +453,11 @@ body.homepage.norye-loading {
   body.homepage.norye-ready > :not(.norye-intro) {
     transition: none;
   }
+
+  .norye-hero-showcase-stage,
+  .norye-hero-showcase-ring {
+    animation: none !important;
+  }
 }
 
 body.collection-page.norye-page-loading,
@@ -2113,76 +2118,104 @@ body.collection-page {
 }
 
 .norye-hero-image {
-  background: var(--norye-off-white);
-  border: 1px solid var(--norye-border);
-  padding: 1.5rem;
-  border-radius: 4px;
-  overflow: hidden;
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: visible;
 }
 
 .norye-hero-media {
   position: relative;
-  overflow: hidden;
-  border-radius: 2px;
-  border: 1px solid var(--norye-gold-light);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
-  aspect-ratio: 4 / 5;
-  max-height: 480px;
+  overflow: visible;
+  border: none;
+  box-shadow: none;
+  aspect-ratio: auto;
+  max-height: none;
   margin: 0 auto;
-  background: linear-gradient(145deg, #FAFAF8 0%, #F3EDE3 100%);
+  background: radial-gradient(ellipse at center, rgba(243, 237, 227, 0.55) 0%, transparent 68%);
 }
 
-.norye-hero-media::before {
-  content: "";
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  width: 28px;
-  height: 28px;
-  border-top: 2px solid var(--norye-gold);
-  border-left: 2px solid var(--norye-gold);
-  z-index: 2;
-  pointer-events: none;
+.norye-hero-showcase {
+  text-align: center;
 }
 
-.norye-hero-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(250, 250, 248, 0.85) 100%);
-  pointer-events: none;
-  z-index: 1;
+.norye-hero-showcase-stage {
+  perspective: 900px;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: noryeHeroFloat 6s ease-in-out infinite;
 }
 
-.norye-hero-gif {
-  width: 100%;
-  height: 100%;
-  max-height: 480px;
-  object-fit: cover;
-  display: block;
-  filter: saturate(0.92) contrast(1.02);
-  animation: noryeHeroScaleIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.norye-hero-showcase-ring {
+  position: relative;
+  width: 180px;
+  height: 300px;
+  transform-style: preserve-3d;
+  animation: noryeHeroSpin 20s linear infinite;
 }
 
-@keyframes noryeHeroScaleIn {
-  from {
-    opacity: 0;
-    transform: scale(1.04);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-body.norye-ready .norye-hero-gif {
+.norye-hero-showcase.is-static .norye-hero-showcase-stage {
   animation: none;
 }
 
-.norye-hero-image img {
-  width: 100%;
-  max-height: 480px;
+.norye-hero-showcase.is-static .norye-hero-showcase-ring {
+  animation: none;
+}
+
+.norye-hero-showcase-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  text-decoration: none;
+}
+
+.norye-hero-showcase-slide img {
+  max-height: 280px;
+  width: auto;
+  max-width: 100%;
   object-fit: contain;
+  filter: drop-shadow(0 22px 36px rgba(0, 0, 0, 0.16));
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.norye-hero-showcase-slide:hover img {
+  transform: scale(1.03);
+}
+
+.norye-hero-showcase-caption {
+  margin: 0.5rem 0 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: #666;
+  text-transform: uppercase;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.norye-hero-showcase-caption.is-fading {
+  opacity: 0;
+}
+
+@keyframes noryeHeroSpin {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes noryeHeroFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .btn-norye-gold {
@@ -2192,7 +2225,10 @@ body.norye-ready .norye-hero-gif {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.85rem 1.75rem;
-  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-norye-gold:hover {
@@ -2208,7 +2244,10 @@ body.norye-ready .norye-hero-gif {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.85rem 1.75rem;
-  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-norye-outline:hover {
@@ -2218,6 +2257,14 @@ body.norye-ready .norye-hero-gif {
 }
 
 /* Paired buttons: hover one fills, sibling clears */
+.norye-btn-pair .btn-norye-gold,
+.norye-btn-pair .btn-norye-outline {
+  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .norye-btn-pair .btn-norye-gold {
   background: var(--norye-gold);
   border-color: var(--norye-gold);
@@ -2667,13 +2714,12 @@ body.norye-ready .norye-hero-gif {
     height: 220px;
   }
 
-  .norye-hero-media {
-    max-height: 320px;
+  .norye-hero-showcase-stage {
+    height: 300px;
   }
 
-  .norye-hero-gif,
-  .norye-hero-image img {
-    max-height: 320px;
+  .norye-hero-showcase-slide img {
+    max-height: 220px;
   }
 
   .norye-add-cart {
@@ -3087,8 +3133,16 @@ body.norye-ready .norye-hero-gif {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.35rem;
+  gap: 0.4rem;
   flex-shrink: 0;
+  min-width: 88px;
+}
+
+.norye-cart-item-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
 }
 
 .norye-cart-qty {
@@ -3132,15 +3186,20 @@ body.norye-ready .norye-hero-gif {
 .norye-cart-remove {
   background: none;
   border: none;
-  color: #ccc;
-  font-size: 1rem;
-  line-height: 1;
+  color: #888;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  line-height: 1.2;
   padding: 0;
   cursor: pointer;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .norye-cart-remove:hover {
-  color: #666;
+  color: var(--norye-gold-dark);
 }
 
 .norye-cart-footer {
