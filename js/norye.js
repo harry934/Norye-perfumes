@@ -722,17 +722,32 @@
 
     window.setTimeout(function () {
       if (intro) intro.classList.add("is-opening");
-    }, 600);
+    }, 1000);
 
     window.setTimeout(function () {
       finishIntroReveal(intro);
-    }, 1400);
+    }, 2200);
   }
 
   function dismissPreloader() {
     var intro = document.getElementById("noryeIntro");
     if (!intro || intro.classList.contains("is-done")) return;
+    if (document.body.classList.contains("homepage")) return;
     finishIntroReveal(intro);
+  }
+
+  function registerPreloaderFallback() {
+    if (!document.body.classList.contains("homepage")) {
+      window.addEventListener("load", dismissPreloader);
+      return;
+    }
+
+    window.setTimeout(function () {
+      var intro = document.getElementById("noryeIntro");
+      if (intro && !intro.classList.contains("is-done")) {
+        finishIntroReveal(intro);
+      }
+    }, 4000);
   }
 
   function initPriceReveal(root) {
@@ -831,7 +846,7 @@
     if (!document.body.classList.contains("homepage")) {
       dismissPreloader();
     }
-    window.addEventListener("load", dismissPreloader);
+    registerPreloaderFallback();
   }
 
   function getHeroShowcaseProducts() {
@@ -902,14 +917,25 @@
 
     function renderDots(activeIndex) {
       if (!dots) return;
-      dots.innerHTML = products.map(function (p, i) {
-        var isActive = i === activeIndex;
-        return (
-          '<button type="button" class="norye-hero-showcase-dot' + (isActive ? " is-active" : "") + '" ' +
-            'role="tab" aria-selected="' + isActive + '" aria-label="Show ' + p.number + '" data-index="' + i + '">' +
-          "</button>"
-        );
-      }).join("");
+
+      if (!dots.dataset.built) {
+        dots.innerHTML = products.map(function (p, i) {
+          return (
+            '<button type="button" class="norye-hero-showcase-dot' + (i === activeIndex ? " is-active" : "") + '" ' +
+              'role="tab" aria-selected="' + (i === activeIndex) + '" aria-label="Show ' + p.number + '" data-index="' + i + '">' +
+            "</button>"
+          );
+        }).join("");
+        dots.dataset.built = "1";
+        return;
+      }
+
+      dots.querySelectorAll(".norye-hero-showcase-dot").forEach(function (button) {
+        var index = Number(button.getAttribute("data-index"));
+        var isActive = index === activeIndex;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-selected", String(isActive));
+      });
     }
 
     function updateSlideFocus(activeIndex) {
@@ -949,6 +975,7 @@
     var rotationSpeed = 360 / spinDurationMs;
     var rotation = 0;
     var lastFrameTime = 0;
+    var lastFocusIndex = -1;
     var autoPausedUntil = 0;
     var touchStartX = 0;
     var touchActive = false;
@@ -962,7 +989,13 @@
     showcase.classList.add("is-dormant");
 
     function applyRotation() {
-      ring.style.transform = "rotateY(" + rotation + "deg)";
+      ring.style.transform = "rotate3d(0, 1, 0, " + rotation + "deg)";
+    }
+
+    function syncSlideFocus(activeIndex) {
+      if (activeIndex === lastFocusIndex) return;
+      lastFocusIndex = activeIndex;
+      updateSlideFocus(activeIndex);
     }
 
     function getClosestRotationForIndex(index) {
@@ -986,7 +1019,7 @@
         var eased = 1 - Math.pow(1 - progress, 3);
         rotation = startRotation + (targetRotation - startRotation) * eased;
         applyRotation();
-        updateSlideFocus(getHeroActiveIndex(rotation, count, angleStep));
+        syncSlideFocus(getHeroActiveIndex(rotation, count, angleStep));
         if (progress < 1) {
           window.requestAnimationFrame(step);
         } else {
@@ -1007,6 +1040,7 @@
     function tick(timestamp) {
       if (!lastFrameTime) lastFrameTime = timestamp;
       var delta = timestamp - lastFrameTime;
+      if (delta > 48) delta = 48;
       lastFrameTime = timestamp;
 
       if (
@@ -1021,7 +1055,7 @@
       applyRotation();
 
       var activeIndex = getHeroActiveIndex(rotation, count, angleStep);
-      updateSlideFocus(activeIndex);
+      syncSlideFocus(activeIndex);
       if (activeIndex !== currentIndex && !isSnapping) {
         updateActiveState(activeIndex, true);
       }
@@ -1087,7 +1121,7 @@
           touchStartX = touchX;
           applyRotation();
           var activeIndex = getHeroActiveIndex(rotation, count, angleStep);
-          updateSlideFocus(activeIndex);
+          syncSlideFocus(activeIndex);
           if (activeIndex !== currentIndex) {
             updateActiveState(activeIndex, true);
           }

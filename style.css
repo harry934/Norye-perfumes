@@ -478,6 +478,11 @@ body.homepage.norye-loading {
     opacity: 1 !important;
     transform: none !important;
   }
+
+  .norye-btn-pair .btn-norye-gold::before,
+  .norye-btn-pair .btn-norye-outline::before {
+    transition: none !important;
+  }
 }
 
 body.collection-page.norye-page-loading,
@@ -2375,6 +2380,8 @@ body.collection-page {
   transform-style: preserve-3d;
   z-index: 2;
   will-change: transform;
+  backface-visibility: hidden;
+  contain: layout style;
 }
 
 .norye-hero-showcase.is-static .norye-hero-showcase-stage {
@@ -2614,53 +2621,85 @@ body.collection-page {
   color: #fff;
 }
 
-/* Paired buttons: hover one fills, sibling clears */
+/* Paired buttons: vertical fill swap on hover */
 .norye-btn-pair .btn-norye-gold,
 .norye-btn-pair .btn-norye-outline {
-  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 0;
+  background: transparent;
+  transition: color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.norye-btn-pair .btn-norye-gold::before,
+.norye-btn-pair .btn-norye-outline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  background: var(--norye-gold);
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
 }
 
 .norye-btn-pair .btn-norye-gold {
-  background: var(--norye-gold);
   border-color: var(--norye-gold);
   color: #fff;
 }
 
+.norye-btn-pair .btn-norye-gold::before {
+  transform: scaleY(1);
+}
+
 .norye-btn-pair .btn-norye-outline {
-  background: transparent;
   border-color: var(--norye-gold);
   color: var(--norye-gold-dark);
 }
 
 .norye-btn-pair:has(.btn-norye-gold:hover) .btn-norye-gold,
 .norye-btn-pair:has(.btn-norye-gold:focus-visible) .btn-norye-gold {
-  background: var(--norye-gold);
-  border-color: var(--norye-gold);
-  color: #fff;
+  color: var(--norye-gold-dark);
+}
+
+.norye-btn-pair:has(.btn-norye-gold:hover) .btn-norye-gold::before,
+.norye-btn-pair:has(.btn-norye-gold:focus-visible) .btn-norye-gold::before {
+  transform: scaleY(0);
 }
 
 .norye-btn-pair:has(.btn-norye-gold:hover) .btn-norye-outline,
 .norye-btn-pair:has(.btn-norye-gold:focus-visible) .btn-norye-outline {
-  background: transparent;
-  border-color: var(--norye-gold);
-  color: var(--norye-gold-dark);
+  color: #fff;
+}
+
+.norye-btn-pair:has(.btn-norye-gold:hover) .btn-norye-outline::before,
+.norye-btn-pair:has(.btn-norye-gold:focus-visible) .btn-norye-outline::before {
+  transform: scaleY(1);
 }
 
 .norye-btn-pair:has(.btn-norye-outline:hover) .btn-norye-outline,
 .norye-btn-pair:has(.btn-norye-outline:focus-visible) .btn-norye-outline {
-  background: var(--norye-gold);
-  border-color: var(--norye-gold);
   color: #fff;
+}
+
+.norye-btn-pair:has(.btn-norye-outline:hover) .btn-norye-outline::before,
+.norye-btn-pair:has(.btn-norye-outline:focus-visible) .btn-norye-outline::before {
+  transform: scaleY(1);
 }
 
 .norye-btn-pair:has(.btn-norye-outline:hover) .btn-norye-gold,
 .norye-btn-pair:has(.btn-norye-outline:focus-visible) .btn-norye-gold {
-  background: transparent;
-  border-color: var(--norye-gold);
   color: var(--norye-gold-dark);
+}
+
+.norye-btn-pair:has(.btn-norye-outline:hover) .btn-norye-gold::before,
+.norye-btn-pair:has(.btn-norye-outline:focus-visible) .btn-norye-gold::before {
+  transform: scaleY(0);
 }
 
 .btn-primary {
