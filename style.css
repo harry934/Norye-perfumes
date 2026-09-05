@@ -466,10 +466,6 @@ body.homepage.norye-loading {
     opacity: 0 !important;
   }
 
-  .norye-page-veil {
-    display: none !important;
-  }
-
   .norye-cart-fly,
   .norye-cart-item.is-entering,
   .norye-cart-item.is-removing,
@@ -1964,7 +1960,7 @@ body.collection-page {
   position: relative;
 }
 
-.norye-navbar-center .nav-link::after {
+.norye-navbar-center .nav-link::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1975,9 +1971,9 @@ body.collection-page {
   transition: width 0.35s ease;
 }
 
-.norye-navbar-center .nav-link:hover::after,
-.norye-navbar-center .nav-link:focus::after,
-.norye-navbar-center .nav-link.active::after {
+.norye-navbar-center .nav-link:hover::before,
+.norye-navbar-center .nav-link:focus::before,
+.norye-navbar-center .nav-link.active::before {
   width: 100%;
 }
 
@@ -3693,25 +3689,6 @@ body.collection-page {
   padding: 0.7rem 1rem;
   font-size: 0.72rem;
   letter-spacing: 0.1em;
-}
-
-/* Page transition veil */
-.norye-page-veil {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  background: linear-gradient(135deg, rgba(250, 246, 238, 0.98) 0%, rgba(212, 175, 110, 0.35) 100%);
-  transition: opacity 0.32s ease, visibility 0.32s ease;
-}
-
-.norye-page-veil.is-active,
-.norye-page-veil.is-leaving {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
 }
 
 /* Fly to cart */

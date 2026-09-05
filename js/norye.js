@@ -696,7 +696,6 @@
     }
     document.body.classList.remove("norye-loading");
     document.body.classList.add("norye-ready");
-    dismissPageVeil();
 
     document.querySelectorAll("#billboard [data-aos]").forEach(function (el) {
       el.classList.add("aos-animate");
@@ -734,77 +733,6 @@
     var intro = document.getElementById("noryeIntro");
     if (!intro || intro.classList.contains("is-done")) return;
     finishIntroReveal(intro);
-  }
-
-  function ensurePageVeil() {
-    var veil = document.getElementById("norye-page-veil");
-    if (veil) return veil;
-
-    veil = document.createElement("div");
-    veil.id = "norye-page-veil";
-    veil.className = "norye-page-veil";
-    veil.setAttribute("aria-hidden", "true");
-    document.body.appendChild(veil);
-    return veil;
-  }
-
-  function dismissPageVeil() {
-    var veil = document.getElementById("norye-page-veil");
-    if (veil) {
-      veil.classList.remove("is-active", "is-leaving");
-    }
-  }
-
-  function isSameOriginPageLink(href) {
-    if (!href || href.charAt(0) === "#") return false;
-    if (/^(mailto:|tel:|javascript:)/i.test(href)) return false;
-    if (/instagram|whatsapp|wa\.me/i.test(href)) return false;
-
-    var target;
-    try {
-      target = new URL(href, window.location.href);
-    } catch (err) {
-      return false;
-    }
-
-    if (target.origin !== window.location.origin) return false;
-
-    var current = new URL(window.location.href);
-    if (target.pathname === current.pathname && target.search === current.search) {
-      return false;
-    }
-
-    return /\.html?$/i.test(target.pathname) || target.pathname === "/" || !/\./.test(target.pathname.split("/").pop());
-  }
-
-  function initPageTransitions() {
-    var veil = ensurePageVeil();
-    var reduced = prefersReducedMotion();
-
-    function tryDismissVeil() {
-      dismissPageVeil();
-    }
-
-    window.addEventListener("load", function () {
-      dismissPageVeil();
-    });
-
-    window.setTimeout(dismissPageVeil, 1800);
-
-    if (reduced) return;
-
-    document.body.addEventListener("click", function (e) {
-      var link = e.target.closest("a[href]");
-      if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
-      if (!isSameOriginPageLink(link.getAttribute("href"))) return;
-
-      e.preventDefault();
-      var destination = new URL(link.getAttribute("href"), window.location.href).href;
-      veil.classList.add("is-leaving");
-      window.setTimeout(function () {
-        window.location.href = destination;
-      }, 320);
-    });
   }
 
   function initPriceReveal(root) {
@@ -893,8 +821,6 @@
 
   function initGlobal() {
     clearLegacyCheckoutStorage();
-    ensurePageVeil();
-    initPageTransitions();
     bindCartEvents();
     initSearch();
     initCheckoutForm();
@@ -1256,7 +1182,6 @@
     window.setTimeout(function () {
       document.body.classList.remove("norye-page-loading");
       document.body.classList.add("norye-page-ready");
-      dismissPageVeil();
       revealAosElements();
       initPriceReveal();
       if (typeof callback === "function") {
