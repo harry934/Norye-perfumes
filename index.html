@@ -98,25 +98,42 @@
 
   <div class="offcanvas offcanvas-end norye-cart-panel" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasCart" aria-labelledby="cartOffcanvasLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title text-uppercase" id="cartOffcanvasLabel">Your Cart</h5>
+      <div>
+        <h5 class="offcanvas-title text-uppercase" id="cartOffcanvasLabel">Your Bag</h5>
+        <p class="norye-cart-header-meta" id="cart-item-count-label"></p>
+      </div>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body d-flex flex-column">
-      <div id="cart-empty" class="text-center py-4">Your cart is empty</div>
-      <ul class="list-group mb-3" id="cart-items-list"></ul>
-      <div id="cart-footer" class="norye-cart-footer" style="display: none;">
-        <form id="cart-checkout-form" class="norye-checkout-form">
-          <input type="text" id="checkout-name" class="form-control" placeholder="Full name" required>
-          <input type="tel" id="checkout-phone" class="form-control" placeholder="Phone (WhatsApp)" required>
-          <input type="text" id="checkout-location" class="form-control" placeholder="Delivery location" required>
-          <textarea id="checkout-notes" class="form-control" rows="2" placeholder="Notes (optional)"></textarea>
-        </form>
-        <p id="checkout-error" class="norye-checkout-error" role="alert"></p>
-        <div class="d-flex justify-content-between mb-3 px-1">
-          <span>Total (KES)</span>
-          <strong id="cart-total">Ksh 0</strong>
+    <div class="offcanvas-body d-flex flex-column norye-cart-body">
+      <div id="cart-empty" class="norye-cart-empty">
+        <p class="norye-cart-empty-title">Your bag is empty</p>
+        <p class="norye-cart-empty-text">Discover our signature scents.</p>
+        <a href="index.html#featured" class="btn btn-norye-outline btn-sm" data-bs-dismiss="offcanvas">Shop now</a>
+      </div>
+      <div id="cart-content" class="norye-cart-content" hidden>
+        <ul class="norye-cart-items" id="cart-items-list"></ul>
+        <div id="cart-footer" class="norye-cart-footer">
+          <form id="cart-checkout-form" class="norye-checkout-form" novalidate>
+            <h6 class="norye-cart-checkout-title">Delivery details</h6>
+            <input type="text" id="checkout-name" class="form-control norye-checkout-input" placeholder="Full name" required autocomplete="name">
+            <input type="tel" id="checkout-phone" class="form-control norye-checkout-input" placeholder="WhatsApp number" required autocomplete="tel">
+            <input type="text" id="checkout-location" class="form-control norye-checkout-input" placeholder="Delivery location" required autocomplete="off">
+            <textarea id="checkout-notes" class="form-control norye-checkout-input" rows="2" placeholder="Order notes (optional)"></textarea>
+          </form>
+          <p id="checkout-error" class="norye-checkout-error" role="alert"></p>
+          <div class="norye-cart-summary">
+            <div class="norye-cart-summary-row">
+              <span>Subtotal</span>
+              <span id="cart-subtotal">Ksh 0</span>
+            </div>
+            <div class="norye-cart-summary-row norye-cart-summary-total">
+              <span>Total</span>
+              <strong id="cart-total">Ksh 0</strong>
+            </div>
+          </div>
+          <button type="button" id="cart-order-btn" class="btn btn-norye-gold w-100 norye-cart-order-btn">Complete order on WhatsApp</button>
+          <p class="norye-cart-checkout-note">You will be redirected to WhatsApp to confirm your order with our team.</p>
         </div>
-        <button type="button" id="cart-order-btn" class="btn btn-norye-gold w-100">Order on WhatsApp</button>
       </div>
     </div>
   </div>

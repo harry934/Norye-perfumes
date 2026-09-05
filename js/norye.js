@@ -2,7 +2,6 @@
   "use strict";
 
   var CART_KEY = "norye-cart";
-  var CHECKOUT_KEY = "norye-checkout";
   var ITEM_PRICE = 1299;
 
   function productUrl(code) {
@@ -22,32 +21,39 @@
 
   function buildOrderMessage(checkout) {
     var cart = getCart();
-    var lines = ["*N Ō R Y E Order*", "", "Items:"];
+    var lines = [
+      "Hello NŌRYE Team,",
+      "",
+      "I would like to place an order:",
+      ""
+    ];
 
     cart.forEach(function (item) {
       var product = getProductByCode(item.code);
       if (!product) return;
       lines.push(
-        "- " + product.number + " · " + product.inspiredBy +
-        " x" + item.qty + " — " + formatPrice(item.qty * ITEM_PRICE)
+        "• " + product.number + " — Inspired by " + product.inspiredBy +
+        " (Qty: " + item.qty + ") — " + formatPrice(item.qty * ITEM_PRICE)
       );
     });
 
     lines.push("");
-    lines.push("Total: " + formatPrice(getCartTotal(cart)));
+    lines.push("*Order total: " + formatPrice(getCartTotal(cart)) + "*");
     lines.push("");
+    lines.push("Customer details:");
     lines.push("Name: " + checkout.name);
-    lines.push("Phone: " + checkout.phone);
+    lines.push("WhatsApp: " + checkout.phone);
     lines.push("Delivery: " + checkout.location);
     if (checkout.notes) {
       lines.push("Notes: " + checkout.notes);
     }
+    lines.push("");
+    lines.push("Please confirm availability and delivery. Thank you.");
 
     return lines.join("\n");
   }
 
-  function buildWhatsAppOrderUrl(checkoutOverride) {
-    var checkout = checkoutOverride || getCheckout();
+  function buildWhatsAppOrderUrl(checkout) {
     return orderUrl() + "?text=" + encodeURIComponent(buildOrderMessage(checkout));
   }
 
@@ -77,17 +83,10 @@
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }
 
-  function getCheckout() {
+  function clearLegacyCheckoutStorage() {
     try {
-      var raw = localStorage.getItem(CHECKOUT_KEY);
-      return raw ? JSON.parse(raw) : { name: "", phone: "", location: "", notes: "" };
-    } catch (e) {
-      return { name: "", phone: "", location: "", notes: "" };
-    }
-  }
-
-  function saveCheckout(data) {
-    localStorage.setItem(CHECKOUT_KEY, JSON.stringify(data));
+      localStorage.removeItem("norye-checkout");
+    } catch (e) {}
   }
 
   function getCartItemCount(cart) {
@@ -181,114 +180,120 @@
 
     var list = document.getElementById("cart-items-list");
     var empty = document.getElementById("cart-empty");
-    var footer = document.getElementById("cart-footer");
+    var content = document.getElementById("cart-content");
+    var subtotalEl = document.getElementById("cart-subtotal");
     var totalEl = document.getElementById("cart-total");
+    var countLabel = document.getElementById("cart-item-count-label");
     var errorEl = document.getElementById("checkout-error");
 
     if (!list) return;
 
     if (count === 0) {
       list.innerHTML = "";
-      if (empty) empty.style.display = "block";
-      if (footer) footer.style.display = "none";
+      if (empty) empty.hidden = false;
+      if (content) content.hidden = true;
       if (errorEl) errorEl.textContent = "";
       return;
     }
 
-    if (empty) empty.style.display = "none";
-    if (footer) footer.style.display = "block";
+    if (empty) empty.hidden = true;
+    if (content) content.hidden = false;
     if (errorEl) errorEl.textContent = "";
+
+    if (countLabel) {
+      countLabel.textContent = count === 1 ? "1 item" : count + " items";
+    }
 
     list.innerHTML = cart.map(function (item) {
       var product = getProductByCode(item.code);
       if (!product) return "";
       return (
-        '<li class="list-group-item norye-cart-item">' +
-          '<div class="d-flex justify-content-between align-items-start gap-2">' +
-            '<div class="norye-cart-item-info">' +
-              '<h6 class="my-0">' + product.number + "</h6>" +
-              '<small class="text-body-secondary">Inspired by ' + product.inspiredBy + "</small>" +
+        '<li class="norye-cart-item">' +
+          '<div class="norye-cart-item-inner">' +
+            '<a href="' + productUrl(product.code) + '" class="norye-cart-item-thumb" data-bs-dismiss="offcanvas">' +
+              '<img src="' + product.image + '" alt="' + product.name + '" class="norye-cart-item-img">' +
+            "</a>" +
+            '<div class="norye-cart-item-details">' +
+              '<div class="norye-cart-item-top">' +
+                '<div>' +
+                  '<h6 class="norye-cart-item-title">' + product.number + "</h6>" +
+                  '<p class="norye-cart-item-inspired">' + product.inspiredBy + "</p>" +
+                "</div>" +
+                '<button type="button" class="norye-cart-remove" data-remove-cart="' + product.code + '" aria-label="Remove item">&times;</button>' +
+              "</div>" +
+              '<div class="norye-cart-item-bottom">' +
+                '<div class="norye-cart-qty">' +
+                  '<button type="button" class="norye-qty-btn" data-qty-minus="' + product.code + '" aria-label="Decrease quantity">−</button>' +
+                  '<span class="norye-qty-value">' + item.qty + "</span>" +
+                  '<button type="button" class="norye-qty-btn" data-qty-plus="' + product.code + '" aria-label="Increase quantity">+</button>' +
+                "</div>" +
+                '<span class="norye-cart-item-price">' + formatPrice(item.qty * ITEM_PRICE) + "</span>" +
+              "</div>" +
             "</div>" +
-            '<span class="text-body-secondary text-nowrap">' + formatPrice(item.qty * ITEM_PRICE) + "</span>" +
-          "</div>" +
-          '<div class="norye-cart-qty mt-2">' +
-            '<button type="button" class="norye-qty-btn" data-qty-minus="' + product.code + '" aria-label="Decrease quantity">−</button>' +
-            '<span class="norye-qty-value">' + item.qty + "</span>" +
-            '<button type="button" class="norye-qty-btn" data-qty-plus="' + product.code + '" aria-label="Increase quantity">+</button>' +
-            '<button type="button" class="norye-cart-remove ms-auto" data-remove-cart="' + product.code + '">Remove</button>' +
           "</div>" +
         "</li>"
       );
     }).join("");
 
-    if (totalEl) {
-      totalEl.textContent = formatPrice(getCartTotal(cart));
-    }
+    var cartTotal = getCartTotal(cart);
+    if (subtotalEl) subtotalEl.textContent = formatPrice(cartTotal);
+    if (totalEl) totalEl.textContent = formatPrice(cartTotal);
   }
 
   function initCheckoutForm() {
-    var checkout = getCheckout();
-    var fields = {
-      "checkout-name": checkout.name,
-      "checkout-phone": checkout.phone,
-      "checkout-location": checkout.location,
-      "checkout-notes": checkout.notes
-    };
-
-    Object.keys(fields).forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.value = fields[id] || "";
-    });
-
+    var nameEl = document.getElementById("checkout-name");
+    var notesEl = document.getElementById("checkout-notes");
+    var phoneEl = document.getElementById("checkout-phone");
+    var locationEl = document.getElementById("checkout-location");
     var form = document.getElementById("cart-checkout-form");
-    if (!form) return;
-
-    form.addEventListener("input", function () {
-      saveCheckout({
-        name: (document.getElementById("checkout-name") || {}).value || "",
-        phone: (document.getElementById("checkout-phone") || {}).value || "",
-        location: (document.getElementById("checkout-location") || {}).value || "",
-        notes: (document.getElementById("checkout-notes") || {}).value || ""
-      });
-    });
-
     var orderBtn = document.getElementById("cart-order-btn");
-    if (orderBtn) {
-      orderBtn.addEventListener("click", function () {
-        var name = (document.getElementById("checkout-name") || {}).value || "";
-        var phone = (document.getElementById("checkout-phone") || {}).value || "";
-        var location = (document.getElementById("checkout-location") || {}).value || "";
-        var notes = (document.getElementById("checkout-notes") || {}).value || "";
-        var errorEl = document.getElementById("checkout-error");
 
-        saveCheckout({ name: name, phone: phone, location: location, notes: notes });
-
-        if (!name.trim() || !phone.trim() || !location.trim()) {
-          if (errorEl) {
-            errorEl.textContent = "Please enter your name, phone, and delivery location.";
-          }
-          return;
-        }
-
-        if (getCartItemCount(getCart()) === 0) {
-          if (errorEl) errorEl.textContent = "Your cart is empty.";
-          return;
-        }
-
-        var checkout = { name: name, phone: phone, location: location, notes: notes };
-        var message = buildOrderMessage(checkout);
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(message).catch(function () {});
-        }
-
-        if (errorEl) {
-          errorEl.textContent = "Opening WhatsApp with your order details…";
-        }
-
-        window.open(buildWhatsAppOrderUrl(checkout), "_blank", "noopener");
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (orderBtn) orderBtn.click();
       });
     }
+
+    if (!orderBtn) return;
+
+    orderBtn.addEventListener("click", function () {
+      var name = nameEl ? nameEl.value.trim() : "";
+      var phone = phoneEl ? phoneEl.value.trim() : "";
+      var location = locationEl ? locationEl.value.trim() : "";
+      var notes = notesEl ? notesEl.value.trim() : "";
+      var errorEl = document.getElementById("checkout-error");
+
+      if (getCartItemCount(getCart()) === 0) {
+        if (errorEl) errorEl.textContent = "Your cart is empty.";
+        return;
+      }
+
+      if (!name) {
+        if (errorEl) errorEl.textContent = "Please enter your full name.";
+        if (nameEl) nameEl.focus();
+        return;
+      }
+
+      if (!phone) {
+        if (errorEl) errorEl.textContent = "Please enter your WhatsApp number.";
+        if (phoneEl) phoneEl.focus();
+        return;
+      }
+
+      if (!location) {
+        if (errorEl) errorEl.textContent = "Please enter your delivery location.";
+        if (locationEl) locationEl.focus();
+        return;
+      }
+
+      if (errorEl) errorEl.textContent = "";
+
+      var checkoutData = { name: name, phone: phone, location: location, notes: notes };
+      window.open(buildWhatsAppOrderUrl(checkoutData), "_blank", "noopener");
+
+      if (form) form.reset();
+    });
   }
 
   function bindCartEvents() {
@@ -634,6 +639,7 @@
   }
 
   function initGlobal() {
+    clearLegacyCheckoutStorage();
     bindCartEvents();
     initSearch();
     initCheckoutForm();
