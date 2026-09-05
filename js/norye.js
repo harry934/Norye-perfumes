@@ -181,7 +181,6 @@
     var list = document.getElementById("cart-items-list");
     var empty = document.getElementById("cart-empty");
     var content = document.getElementById("cart-content");
-    var subtotalEl = document.getElementById("cart-subtotal");
     var totalEl = document.getElementById("cart-total");
     var countLabel = document.getElementById("cart-item-count-label");
     var errorEl = document.getElementById("checkout-error");
@@ -210,25 +209,19 @@
       return (
         '<li class="norye-cart-item">' +
           '<div class="norye-cart-item-inner">' +
-            '<a href="' + productUrl(product.code) + '" class="norye-cart-item-thumb" data-bs-dismiss="offcanvas">' +
-              '<img src="' + product.image + '" alt="' + product.name + '" class="norye-cart-item-img">' +
-            "</a>" +
+            '<img src="' + product.image + '" alt="' + product.name + '" class="norye-cart-item-img">' +
             '<div class="norye-cart-item-details">' +
-              '<div class="norye-cart-item-top">' +
-                '<div>' +
-                  '<h6 class="norye-cart-item-title">' + product.number + "</h6>" +
-                  '<p class="norye-cart-item-inspired">' + product.inspiredBy + "</p>" +
-                "</div>" +
-                '<button type="button" class="norye-cart-remove" data-remove-cart="' + product.code + '" aria-label="Remove item">&times;</button>' +
+              '<span class="norye-cart-item-title">' + product.number + "</span>" +
+              '<span class="norye-cart-item-inspired">' + product.inspiredBy + "</span>" +
+            "</div>" +
+            '<div class="norye-cart-item-controls">' +
+              '<div class="norye-cart-qty">' +
+                '<button type="button" class="norye-qty-btn" data-qty-minus="' + product.code + '" aria-label="Decrease quantity">−</button>' +
+                '<span class="norye-qty-value">' + item.qty + "</span>" +
+                '<button type="button" class="norye-qty-btn" data-qty-plus="' + product.code + '" aria-label="Increase quantity">+</button>' +
               "</div>" +
-              '<div class="norye-cart-item-bottom">' +
-                '<div class="norye-cart-qty">' +
-                  '<button type="button" class="norye-qty-btn" data-qty-minus="' + product.code + '" aria-label="Decrease quantity">−</button>' +
-                  '<span class="norye-qty-value">' + item.qty + "</span>" +
-                  '<button type="button" class="norye-qty-btn" data-qty-plus="' + product.code + '" aria-label="Increase quantity">+</button>' +
-                "</div>" +
-                '<span class="norye-cart-item-price">' + formatPrice(item.qty * ITEM_PRICE) + "</span>" +
-              "</div>" +
+              '<span class="norye-cart-item-price">' + formatPrice(item.qty * ITEM_PRICE) + "</span>" +
+              '<button type="button" class="norye-cart-remove" data-remove-cart="' + product.code + '" aria-label="Remove item">&times;</button>' +
             "</div>" +
           "</div>" +
         "</li>"
@@ -236,7 +229,6 @@
     }).join("");
 
     var cartTotal = getCartTotal(cart);
-    if (subtotalEl) subtotalEl.textContent = formatPrice(cartTotal);
     if (totalEl) totalEl.textContent = formatPrice(cartTotal);
   }
 
