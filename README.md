@@ -167,4 +167,4 @@ kaira-1.0.0/
 
 ## License
 
-Based on the [Kaira](https://templatesjungle.com/) HTML template by TemplatesJungle. Customized for N Ō R Y E.
+Based on the [Kaira](https://templatesjungle.com/) HTML template by ThemeWagon. Customized for N Ō R Y E.
